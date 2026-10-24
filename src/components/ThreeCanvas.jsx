@@ -227,6 +227,8 @@ export default function ThreeCanvas({
       lens: textureLoader.load('/textures/lens_ring.png'),
       display: textureLoader.load('/textures/display_screen.png'),
       faceplate: textureLoader.load('/textures/faceplate.png'),
+      faceplateNormal: textureLoader.load('/textures/faceplate_normal.png'),
+      faceplateRoughness: textureLoader.load('/textures/faceplate_roughness.png'),
       strap: textureLoader.load('/textures/fabric_strap.png'),
       // Vision Pro Textures
       eyesight: textureLoader.load('/textures/vision_eyesight.png'),
@@ -238,6 +240,8 @@ export default function ThreeCanvas({
       t.colorSpace = THREE.SRGBColorSpace;
       t.anisotropy = Math.min(renderer.capabilities.getMaxAnisotropy(), 8);
     });
+    textures.faceplateNormal.colorSpace = THREE.NoColorSpace;
+    textures.faceplateRoughness.colorSpace = THREE.NoColorSpace;
 
     // Load Model
     const loader = new GLTFLoader();
@@ -269,15 +273,22 @@ export default function ThreeCanvas({
             // Calibrated Industrial PBR Materials
             if (headsetType === 'quest3') {
               if (compId === 'exterior_faceplate') {
-                // Satin matte injection-molded polymer
+                // Calibrated Satin Matte Injection-Molded Polymer (PC-ABS) with Mold-Tech micro-texture
+                child.geometry.computeVertexNormals();
                 child.material = new THREE.MeshPhysicalMaterial({
-                  color: 0xfafafa,
-                  roughness: 0.35,
+                  color: 0xedeeF2, // sophisticated satin off-white
+                  roughness: 0.40,
+                  roughnessMap: textures.faceplateRoughness,
                   metalness: 0.02,
-                  clearcoat: 0.20,
-                  clearcoatRoughness: 0.25,
+                  clearcoat: 0.08,
+                  clearcoatRoughness: 0.35,
+                  sheen: 0.28,
+                  sheenRoughness: 0.48,
+                  sheenColor: new THREE.Color(0xffffff),
                   map: textures.faceplate,
-                  envMapIntensity: 1.2
+                  normalMap: textures.faceplateNormal,
+                  normalScale: new THREE.Vector2(0.40, 0.40),
+                  envMapIntensity: 1.15
                 });
               } else if (compId === 'exterior_housing') {
                 child.material = new THREE.MeshPhysicalMaterial({

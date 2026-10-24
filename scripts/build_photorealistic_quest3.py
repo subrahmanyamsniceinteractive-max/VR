@@ -4,6 +4,7 @@ import json
 import numpy as np
 import trimesh
 from trimesh.visual.material import PBRMaterial
+from trimesh.visual import TextureVisuals
 from PIL import Image, ImageDraw
 
 def ensure_dir(path):
@@ -128,13 +129,128 @@ def make_display_texture():
     img.save("public/textures/display_screen.png")
 
 def make_faceplate_texture():
-    w, h = 1024, 512
-    img = Image.new("RGBA", (w, h), (244, 245, 248, 255))
-    d = ImageDraw.Draw(img)
-    cx, cy = w // 2, 70
-    d.ellipse([(cx - 30, cy - 15), (cx - 4, cy + 15)], outline=(175, 178, 186, 255), width=6)
-    d.ellipse([(cx + 4, cy - 15), (cx + 30, cy + 15)], outline=(175, 178, 186, 255), width=6)
-    img.save("public/textures/faceplate.png")
+    w, h = 2048, 1024
+    
+    # 1. Base color map
+    color_img = Image.new("RGBA", (w, h), (236, 237, 240, 255))
+    d = ImageDraw.Draw(color_img)
+    
+    # Subtle perimeter AO
+    for r in range(40):
+        val = int(236 - (40 - r) * 0.45)
+        d.rounded_rectangle([r*2, r, w - 1 - r*2, h - 1 - r], radius=int(180 - r*2), outline=(val, val+1, val+2, 255), width=2)
+    
+    # Outer parting line seam
+    d.rounded_rectangle([24, 12, w - 25, h - 13], radius=165, outline=(188, 192, 198, 255), width=2)
+    
+    # 2. Meta Logo (debossed infinity emblem)
+    cx, cy = w // 2, 190
+    d.ellipse([cx - 48, cy - 24, cx - 2, cy + 24], outline=(255, 255, 255, 180), width=9)
+    d.ellipse([cx + 2, cy - 24, cx + 48, cy + 24], outline=(255, 255, 255, 180), width=9)
+    d.ellipse([cx - 48, cy - 26, cx - 2, cy + 22], outline=(145, 150, 160, 255), width=8)
+    d.ellipse([cx + 2, cy - 26, cx + 48, cy + 22], outline=(145, 150, 160, 255), width=8)
+    d.ellipse([cx - 48, cy - 27, cx - 2, cy + 21], outline=(115, 120, 130, 200), width=3)
+    d.ellipse([cx + 2, cy - 27, cx + 48, cy + 21], outline=(115, 120, 130, 200), width=3)
+    
+    # 3. Pill Cutouts (Left, Center, Right)
+    pills = [
+        {'x': 592, 'y': 512, 'w': 154, 'h': 350, 'type': 'stereo'},
+        {'x': 1024, 'y': 512, 'w': 144, 'h': 365, 'type': 'depth'},
+        {'x': 1456, 'y': 512, 'w': 154, 'h': 350, 'type': 'stereo'}
+    ]
+    
+    for p in pills:
+        px, py, pw, ph = p['x'], p['y'], p['w'], p['h']
+        hw, hh = pw // 2, ph // 2
+        
+        # Outer soft drop shadow around pill hole in faceplate
+        for s in range(12, 0, -2):
+            alpha = int(35 * (s / 12))
+            d.rounded_rectangle([px - hw - s, py - hh - s, px + hw + s, py + hh + s], radius=hw + s, outline=(200 - s*2, 202 - s*2, 206 - s*2, alpha), width=2)
+        
+        # Beveled rim (chamfered lip)
+        d.rounded_rectangle([px - hw, py - hh, px + hw, py + hh], radius=hw, fill=(48, 52, 58, 255), outline=(175, 180, 188, 255), width=3)
+        d.rounded_rectangle([px - hw + 4, py - hh + 4, px + hw - 4, py + hh - 4], radius=hw - 4, fill=(28, 30, 34, 255), outline=(38, 40, 46, 255), width=2)
+        # Inner aperture cavity
+        d.rounded_rectangle([px - hw + 8, py - hh + 8, px + hw - 8, py + hh - 8], radius=hw - 8, fill=(10, 11, 14, 255))
+        
+        if p['type'] == 'stereo':
+            # Dual camera optical lenses
+            for cam_y in [py - 80, py + 80]:
+                r_outer = 48
+                d.ellipse([px - r_outer, cam_y - r_outer, px + r_outer, cam_y + r_outer], fill=(22, 24, 28, 255), outline=(65, 70, 78, 255), width=2)
+                d.ellipse([px - r_outer + 6, cam_y - r_outer + 6, px + r_outer - 6, cam_y + r_outer - 6], fill=(12, 14, 18, 255))
+                r_glass = 34
+                d.ellipse([px - r_glass, cam_y - r_glass, px + r_glass, cam_y + r_glass], fill=(6, 8, 12, 255), outline=(40, 44, 52, 255), width=2)
+                d.arc([px - r_glass + 4, cam_y - r_glass + 4, px + r_glass - 4, cam_y + r_glass - 4], start=210, end=330, fill=(70, 190, 240, 220), width=3)
+                d.arc([px - r_glass + 6, cam_y - r_glass + 6, px + r_glass - 6, cam_y + r_glass - 6], start=40, end=140, fill=(190, 80, 220, 180), width=2)
+                d.ellipse([px - 14, cam_y - 14, px - 9, cam_y - 9], fill=(255, 255, 255, 230))
+                d.ellipse([px - 8, cam_y - 8, px + 8, cam_y + 8], fill=(2, 3, 4, 255))
+        else:
+            # Central VCSEL Depth Projector & White LED indicator
+            grid_y = py - 70
+            d.rounded_rectangle([px - 44, grid_y - 44, px + 44, grid_y + 44], radius=16, fill=(18, 20, 24, 255), outline=(55, 60, 68, 255), width=2)
+            for gx in range(px - 30, px + 35, 12):
+                for gy in range(grid_y - 30, grid_y + 35, 12):
+                    d.ellipse([gx - 2, gy - 2, gx + 2, gy + 2], fill=(60, 30, 45, 220))
+                    d.point((gx, gy), fill=(120, 50, 75, 255))
+            led_y = py + 75
+            d.ellipse([px - 28, led_y - 28, px + 28, led_y + 28], fill=(16, 18, 22, 255), outline=(50, 54, 62, 255), width=2)
+            d.ellipse([px - 14, led_y - 14, px + 14, led_y + 14], fill=(240, 245, 255, 240), outline=(200, 220, 255, 255), width=1)
+            d.ellipse([px - 8, led_y - 8, px + 8, led_y + 8], fill=(255, 255, 255, 255))
+    
+    # 4. Micro technical typography
+    d.text((1250, 920), 'META QUEST 3 // MODEL MSQ3 // PC-ABS // REV 3.4', fill=(155, 160, 168, 200))
+    d.text((580, 920), 'SPATIAL PERCEPTION ACTIVE ARRAY // DUAL 4MP RGB + TOF', fill=(155, 160, 168, 200))
+    
+    color_img.save("public/textures/faceplate.png")
+    
+    # Normal Map with Mold-Tech micro-stipple and pill bevels
+    height = np.full((h, w), 128, dtype=np.float32)
+    rng = np.random.RandomState(42)
+    height += rng.normal(0, 1.8, (h, w)).astype(np.float32)
+    
+    mask_img = Image.new('L', (w, h), 128)
+    dm = ImageDraw.Draw(mask_img)
+    dm.ellipse([cx - 48, cy - 26, cx - 2, cy + 22], outline=112, width=8)
+    dm.ellipse([cx + 2, cy - 26, cx + 48, cy + 22], outline=112, width=8)
+    for px, py, pw, ph in [(592, 512, 154, 350), (1024, 512, 144, 365), (1456, 512, 154, 350)]:
+        hw, hh = pw // 2, ph // 2
+        dm.rounded_rectangle([px - hw - 8, py - hh - 8, px + hw + 8, py + hh + 8], radius=hw + 8, outline=145, width=6)
+        dm.rounded_rectangle([px - hw, py - hh, px + hw, py + hh], radius=hw, fill=100, outline=160, width=4)
+        dm.rounded_rectangle([px - hw + 8, py - hh + 8, px + hw - 8, py + hh - 8], radius=hw - 8, fill=30)
+    dm.rounded_rectangle([24, 12, w - 25, h - 13], radius=165, outline=105, width=3)
+    
+    mask_arr = np.array(mask_img, dtype=np.float32)
+    height = 0.85 * mask_arr + 0.15 * height
+    gy, gx = np.gradient(height)
+    strength = 2.2
+    nx_arr = -gx * strength
+    ny_arr = -gy * strength
+    nz_arr = np.ones_like(nx_arr) * 12.0
+    norm_arr = np.sqrt(nx_arr**2 + ny_arr**2 + nz_arr**2)
+    nx_arr /= norm_arr
+    ny_arr /= norm_arr
+    nz_arr /= norm_arr
+    
+    r_chan = np.clip((nx_arr * 0.5 + 0.5) * 255, 0, 255).astype(np.uint8)
+    g_chan = np.clip((ny_arr * 0.5 + 0.5) * 255, 0, 255).astype(np.uint8)
+    b_chan = np.clip((nz_arr * 0.5 + 0.5) * 255, 0, 255).astype(np.uint8)
+    Image.fromarray(np.stack([r_chan, g_chan, b_chan], axis=-1), mode='RGB').save("public/textures/faceplate_normal.png")
+    
+    # Roughness Map
+    rough_img = Image.new('L', (w, h), 110)
+    dr = ImageDraw.Draw(rough_img)
+    dr.ellipse([cx - 48, cy - 26, cx - 2, cy + 22], outline=140, width=8)
+    dr.ellipse([cx + 2, cy - 26, cx + 48, cy + 22], outline=140, width=8)
+    for px, py, pw, ph in [(592, 512, 154, 350), (1024, 512, 144, 365), (1456, 512, 154, 350)]:
+        hw, hh = pw // 2, ph // 2
+        dr.rounded_rectangle([px - hw, py - hh, px + hw, py + hh], radius=hw, fill=46, outline=60, width=4)
+        dr.rounded_rectangle([px - hw + 8, py - hh + 8, px + hw - 8, py + hh - 8], radius=hw - 8, fill=16)
+    rough_arr = np.array(rough_img, dtype=np.float32)
+    rough_arr += rng.normal(0, 3.5, (h, w)).astype(np.float32)
+    rough_arr = np.clip(rough_arr, 10, 255).astype(np.uint8)
+    Image.fromarray(rough_arr, mode='L').save("public/textures/faceplate_roughness.png")
 
 def make_fabric_texture():
     w, h = 512, 512
@@ -255,9 +371,9 @@ def make_ribbon_spline(pts, width, thickness=0.08, segments=48):
 
 print("2. Generating authentic CAD subassemblies...")
 
-# 1. Front Faceplate: Smooth Continuous Lofted Shell with 3 Recessed Camera Pill Ports
+# 1. Front Faceplate: Smooth Continuous Lofted Shell with Precision UV Mapping and Real Wall Thickness
 def make_cad_faceplate():
-    nx, ny = 64, 40
+    nx, ny = 96, 64
     xs = np.linspace(-8.8, 8.8, nx)
     ys = np.linspace(-4.5, 4.5, ny)
     
@@ -267,46 +383,71 @@ def make_cad_faceplate():
         for i, x in enumerate(xs):
             bx = abs(x) / 8.8
             by = abs(y) / 4.5
-            curve = 1.35 * ((1.0 - bx**2.3) ** 0.5) * ((1.0 - by**2.2) ** 0.5) if (bx < 1.0 and by < 1.0) else 0.0
-            z = 3.6 + curve
+            curve = 1.32 * ((1.0 - min(1.0, bx**2.3)) ** 0.5) * ((1.0 - min(1.0, by**2.2)) ** 0.5)
+            z = 3.65 + curve
             verts.append([x, y, z])
-            uvs.append([i / (nx - 1), 1.0 - j / (ny - 1)])
+            u = (x - (-8.8)) / 17.6
+            v = (y - (-4.5)) / 9.0
+            uvs.append([u, v])
 
     faces = []
     for j in range(ny - 1):
         for i in range(nx - 1):
             idx = j * nx + i
-            x_val = xs[i]
-            y_val = ys[j]
-            in_left_pill = (abs(x_val - (-3.8)) < 0.72 and abs(y_val) < 1.55)
-            in_mid_pill  = (abs(x_val - 0.0) < 0.62 and abs(y_val) < 1.65)
-            in_right_pill = (abs(x_val - 3.8) < 0.72 and abs(y_val) < 1.55)
-            
-            if not (in_left_pill or in_mid_pill or in_right_pill):
-                faces.append([idx, idx + 1, idx + nx + 1])
-                faces.append([idx, idx + nx + 1, idx + nx])
+            faces.append([idx, idx + 1, idx + nx + 1])
+            faces.append([idx, idx + nx + 1, idx + nx])
 
-    shell_front = trimesh.Trimesh(vertices=verts, faces=faces)
-    
-    back_verts = np.array(verts) - [0, 0, 0.38]
+    verts = np.array(verts)
+    uvs = np.array(uvs)
+    faces = np.array(faces)
+
+    # Back shell for realistic wall thickness (2.8mm injection molded PC-ABS)
+    back_verts = verts - [0, 0, 0.28]
     back_faces = [[f[0] + len(verts), f[2] + len(verts), f[1] + len(verts)] for f in faces]
-    all_verts = np.vstack([verts, back_verts])
-    all_faces = np.vstack([faces, back_faces])
-    shell = trimesh.Trimesh(vertices=all_verts, faces=all_faces)
-    
-    pill_frames = []
-    for px in [-3.8, 0.0, 3.8]:
-        pw = 1.25 if px != 0 else 1.10
-        ph = 3.10 if px != 0 else 3.30
-        p_frame = trimesh.creation.capsule(radius=pw*0.5, height=ph - pw)
-        apply_rot(p_frame, math.pi / 2, [1, 0, 0])
-        p_frame.apply_scale([1.10, 1.10, 0.32])
-        p_frame.apply_translation([px, 0.0, 4.35])
-        pill_frames.append(p_frame)
 
-    combined = trimesh.util.concatenate([shell] + pill_frames)
-    combined.fix_normals()
-    return combined
+    all_verts = np.vstack([verts, back_verts])
+    all_uvs = np.vstack([uvs, uvs])
+    all_faces = np.vstack([faces, back_faces])
+
+    # Perimeter perimeter rim faces connecting front and back shell
+    rim_faces = []
+    # bottom edge
+    for i in range(nx - 1):
+        b0 = i
+        b1 = i + 1
+        t0 = b0 + len(verts)
+        t1 = b1 + len(verts)
+        rim_faces.append([b0, t1, t0])
+        rim_faces.append([b0, b1, t1])
+    # top edge
+    for i in range(nx - 1):
+        b0 = (ny - 1) * nx + i
+        b1 = (ny - 1) * nx + i + 1
+        t0 = b0 + len(verts)
+        t1 = b1 + len(verts)
+        rim_faces.append([b0, t0, t1])
+        rim_faces.append([b0, t1, b1])
+    # left edge
+    for j in range(ny - 1):
+        b0 = j * nx
+        b1 = (j + 1) * nx
+        t0 = b0 + len(verts)
+        t1 = b1 + len(verts)
+        rim_faces.append([b0, t0, t1])
+        rim_faces.append([b0, t1, b1])
+    # right edge
+    for j in range(ny - 1):
+        b0 = j * nx + (nx - 1)
+        b1 = (j + 1) * nx + (nx - 1)
+        t0 = b0 + len(verts)
+        t1 = b1 + len(verts)
+        rim_faces.append([b0, t1, t0])
+        rim_faces.append([b0, b1, t1])
+
+    all_faces = np.vstack([all_faces, rim_faces])
+    shell = trimesh.Trimesh(vertices=all_verts, faces=all_faces)
+    shell.visual = TextureVisuals(uv=all_uvs)
+    return shell
 
 # 2. Main Chassis Housing: Organic Contoured Shell with Vent Slots and Nose Arch
 def make_cad_housing():
@@ -709,10 +850,10 @@ cad_specs = [
         "fn": make_cad_faceplate,
         "assembled": [0.0, 0.0, 0.0],
         "exploded": [0.0, 0.0, 11.0],
-        "mat": PBRMaterial(name="Mat_Faceplate", baseColorFactor=[0.96, 0.96, 0.98, 1.0], roughnessFactor=0.35, metallicFactor=0.02),
+        "mat": PBRMaterial(name="Mat_Faceplate", baseColorFactor=[0.93, 0.93, 0.95, 1.0], roughnessFactor=0.40, metallicFactor=0.02),
         "category": "Exterior Shell",
-        "specs": "Injection-molded high-impact polycarbonate (PC-ABS), satin anti-glare finish, triple pill sensor apertures.",
-        "description": "Forms the front aerodynamic aesthetic shell while providing mechanical shock protection for the internal optical sensor array.",
+        "specs": "Injection-molded high-impact polycarbonate (PC-ABS) alloy with Mold-Tech satin anti-glare finish, triple perception sensor apertures, and debossed Meta insignia.",
+        "description": "Forms the front aerodynamic aesthetic shell while providing mechanical shock protection and thermal dissipation for the internal optical sensor array.",
         "verified": True,
         "cameraTarget": [0.0, 0.0, 11.0],
         "cameraDist": 16.0
