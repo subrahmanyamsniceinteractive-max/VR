@@ -52,9 +52,15 @@ export default function ThreeCanvas({
   const shadowTexRef = useRef(null);
 
   const activeComponentsData = headsetType === 'quest3' ? quest3Data : visionProData;
+
+  const getAssetUrl = (path) => {
+    const base = import.meta.env.BASE_URL || '/';
+    return `${base.replace(/\/$/, '')}/${path.replace(/^\//, '')}`;
+  };
+
   const activeModelPath = customModelUrl || (headsetType === 'quest3' 
-    ? '/models/quest3_exploded.glb' 
-    : '/models/vision_pro_exploded.glb');
+    ? getAssetUrl('models/quest3_exploded.glb') 
+    : getAssetUrl('models/vision_pro_exploded.glb'));
 
   // 1. Initialize Scene, Studio Lighting & Post-Processing
   useEffect(() => {
@@ -244,20 +250,20 @@ export default function ThreeCanvas({
     // Textures
     const textureLoader = new THREE.TextureLoader();
     const textures = {
-      pcb: textureLoader.load('/textures/motherboard_pcb.png'),
-      chip: textureLoader.load('/textures/snapdragon_xr2.png'),
-      battery: textureLoader.load('/textures/battery_label.png'),
-      lens: textureLoader.load('/textures/lens_ring.png'),
-      display: textureLoader.load('/textures/display_screen.png'),
-      faceplate: textureLoader.load('/textures/faceplate.png'),
-      faceplateNormal: textureLoader.load('/textures/faceplate_normal.png'),
-      faceplateRoughness: textureLoader.load('/textures/faceplate_roughness.png'),
-      strap: textureLoader.load('/textures/fabric_strap.png'),
+      pcb: textureLoader.load(getAssetUrl('textures/motherboard_pcb.png')),
+      chip: textureLoader.load(getAssetUrl('textures/snapdragon_xr2.png')),
+      battery: textureLoader.load(getAssetUrl('textures/battery_label.png')),
+      lens: textureLoader.load(getAssetUrl('textures/lens_ring.png')),
+      display: textureLoader.load(getAssetUrl('textures/display_screen.png')),
+      faceplate: textureLoader.load(getAssetUrl('textures/faceplate.png')),
+      faceplateNormal: textureLoader.load(getAssetUrl('textures/faceplate_normal.png')),
+      faceplateRoughness: textureLoader.load(getAssetUrl('textures/faceplate_roughness.png')),
+      strap: textureLoader.load(getAssetUrl('textures/fabric_strap.png')),
       // Vision Pro Textures
-      eyesight: textureLoader.load('/textures/vision_eyesight.png'),
-      visionSilicon: textureLoader.load('/textures/vision_silicon.png'),
-      soloKnit: textureLoader.load('/textures/vision_solo_knit.png'),
-      microOled: textureLoader.load('/textures/vision_micro_oled.png')
+      eyesight: textureLoader.load(getAssetUrl('textures/vision_eyesight.png')),
+      visionSilicon: textureLoader.load(getAssetUrl('textures/vision_silicon.png')),
+      soloKnit: textureLoader.load(getAssetUrl('textures/vision_solo_knit.png')),
+      microOled: textureLoader.load(getAssetUrl('textures/vision_micro_oled.png'))
     };
     Object.values(textures).forEach(t => {
       t.colorSpace = THREE.SRGBColorSpace;
