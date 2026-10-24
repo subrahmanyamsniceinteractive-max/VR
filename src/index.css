@@ -2,70 +2,90 @@
 
 @layer base {
   :root {
-    /* Premium Blue Technology Theme Palette */
-    --bg-main: #08172B;
+    /* Centralized Dynamic Theme Variables (Default: Midnight Blue) */
+    --bg-primary: #08172B;
     --bg-secondary: #102744;
-    --accent-blue: #398BFF;
-    --gradient-glow: #173B65;
-    --bg-light-tech: #EAF2FC;
+    --accent-color: #398BFF;
     --text-primary: #F4F7FC;
     --text-secondary: #B5C5DA;
+    --scene-background: #08172B;
+    --gradient-glow: #173B65;
+    --bg-light-tech: #EAF2FC;
     --text-light-tech: #08172B;
-    --border-dark: rgba(57, 139, 255, 0.18);
-    --border-light: rgba(16, 39, 68, 0.20);
+
+    /* Dynamic RGB Channels for Alpha Blending */
+    --bg-primary-rgb: 8, 23, 43;
+    --bg-secondary-rgb: 16, 39, 68;
+    --accent-rgb: 57, 139, 255;
+    --glow-rgb: 23, 59, 101;
+    --shadow-rgb: 8, 23, 43;
+
+    /* Legacy compatibility aliases */
+    --bg-main: var(--bg-primary);
+    --accent-blue: var(--accent-color);
   }
 
   html, body {
     width: 100%;
     height: 100%;
     overflow-x: hidden;
-    background-color: var(--bg-main);
+    background-color: var(--bg-primary);
     color: var(--text-primary);
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif;
     letter-spacing: -0.015em;
     user-select: none;
+    transition: background-color 0.25s ease, color 0.25s ease;
   }
 }
 
-/* Custom Minimalist Blue Scrollbar */
+/* Custom Minimalist Scrollbar */
 ::-webkit-scrollbar {
   width: 6px;
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #08172B;
+  background: var(--bg-primary);
 }
 ::-webkit-scrollbar-thumb {
-  background: #173B65;
+  background: var(--gradient-glow);
   border-radius: 3px;
-  border: 1px solid rgba(57, 139, 255, 0.22);
+  border: 1px solid rgba(var(--accent-rgb), 0.22);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #398BFF;
+  background: var(--accent-color);
 }
 
-/* Premium Deep Navy Glass Surface */
+/* Premium Adaptive Glass Surface */
 .navy-glass {
-  background: rgba(16, 39, 68, 0.82);
+  background: rgba(var(--bg-secondary-rgb), 0.85);
   backdrop-filter: blur(28px);
   -webkit-backdrop-filter: blur(28px);
-  border: 1px solid rgba(57, 139, 255, 0.20);
-  box-shadow: 0 16px 40px rgba(8, 23, 43, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(var(--accent-rgb), 0.24);
+  box-shadow: 0 16px 40px rgba(var(--shadow-rgb), 0.65), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  color: var(--text-primary);
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease, box-shadow 0.25s ease;
 }
 
-/* Clean Ice-White Technical Section Surface */
+[data-theme="light"] .navy-glass {
+  background: rgba(var(--bg-secondary-rgb), 0.90);
+  box-shadow: 0 16px 40px rgba(15, 23, 42, 0.12), inset 0 1px 0 rgba(255, 255, 255, 0.7);
+  border: 1px solid rgba(var(--accent-rgb), 0.28);
+}
+
+/* Clean Ice-White / Light Technical Section Surface */
 .light-tech-card {
-  background: #EAF2FC;
-  color: #08172B;
-  border: 1px solid rgba(57, 139, 255, 0.32);
-  box-shadow: 0 20px 48px rgba(8, 23, 43, 0.55);
+  background: var(--bg-light-tech);
+  color: var(--text-light-tech);
+  border: 1px solid rgba(var(--accent-rgb), 0.32);
+  box-shadow: 0 20px 48px rgba(var(--shadow-rgb), 0.25);
+  transition: background-color 0.25s ease, border-color 0.25s ease, color 0.25s ease;
 }
 
 /* Interactive Pill Buttons */
 .navy-pill-btn {
-  background: rgba(23, 59, 101, 0.38);
-  border: 1px solid rgba(57, 139, 255, 0.26);
-  color: #F4F7FC;
+  background: rgba(var(--glow-rgb), 0.35);
+  border: 1px solid rgba(var(--accent-rgb), 0.26);
+  color: var(--text-primary);
   font-size: 0.78rem;
   letter-spacing: 0.02em;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -75,29 +95,29 @@
   cursor: pointer;
 }
 .navy-pill-btn:hover {
-  background: rgba(57, 139, 255, 0.22);
-  border-color: #398BFF;
-  color: #FFFFFF;
-  box-shadow: 0 0 16px rgba(57, 139, 255, 0.30);
+  background: rgba(var(--accent-rgb), 0.24);
+  border-color: var(--accent-color);
+  color: var(--text-primary);
+  box-shadow: 0 0 16px rgba(var(--accent-rgb), 0.32);
 }
 .navy-pill-btn:active {
   transform: scale(0.98);
 }
 .navy-pill-btn.active {
-  background: #398BFF;
-  color: #F4F7FC;
-  border-color: #398BFF;
+  background: var(--accent-color);
+  color: #FFFFFF;
+  border-color: var(--accent-color);
   font-weight: 600;
-  box-shadow: 0 0 20px rgba(57, 139, 255, 0.42);
+  box-shadow: 0 0 20px rgba(var(--accent-rgb), 0.45);
 }
 
-/* Accent Blue Action Button */
+/* Accent Action Button */
 .blue-action-btn {
-  background: #398BFF;
-  color: #F4F7FC;
+  background: var(--accent-color);
+  color: #FFFFFF;
   border: 1px solid rgba(255, 255, 255, 0.25);
   font-weight: 600;
-  box-shadow: 0 4px 18px rgba(57, 139, 255, 0.42);
+  box-shadow: 0 4px 18px rgba(var(--accent-rgb), 0.42);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   display: inline-flex;
   align-items: center;
@@ -105,8 +125,8 @@
   cursor: pointer;
 }
 .blue-action-btn:hover {
-  background: #4fa0ff;
-  box-shadow: 0 6px 24px rgba(57, 139, 255, 0.55);
+  filter: brightness(1.1);
+  box-shadow: 0 6px 24px rgba(var(--accent-rgb), 0.55);
   transform: translateY(-1px);
 }
 .blue-action-btn:active {
@@ -119,7 +139,7 @@
   font-size: 0.65rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #B5C5DA;
+  color: var(--text-secondary);
 }
 
 .spec-tag-blue {
@@ -127,5 +147,31 @@
   font-size: 0.65rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #398BFF;
+  color: var(--accent-color);
 }
+
+/* Modal and Drawer Animations */
+@keyframes fadeIn {
+  from { opacity: 0; }
+  to { opacity: 1; }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+
+.animate-fade-in {
+  animation: fadeIn 0.22s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+
+.animate-slide-in {
+  animation: slideInRight 0.28s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}
+

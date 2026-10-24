@@ -7,6 +7,8 @@ import ScrollStory from './components/ScrollStory';
 import HeaderNav from './components/HeaderNav';
 import LoadingScreen from './components/LoadingScreen';
 import EngineeringAssetInspector from './components/EngineeringAssetInspector';
+import ThemeCustomizer from './components/ThemeCustomizer';
+import { getSavedTheme, saveTheme, applyThemeToDom, DEFAULT_THEME } from './utils/themeManager';
 import quest3Data from './data/componentsData.json';
 import visionProData from './data/visionProData.json';
 import gsap from 'gsap';
@@ -28,6 +30,21 @@ export default function App() {
   const [modelStats, setModelStats] = useState(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isGuideOpen, setIsGuideOpen] = useState(false);
+  const [theme, setTheme] = useState(getSavedTheme);
+
+  // Apply theme to DOM on mount and whenever theme changes
+  useEffect(() => {
+    applyThemeToDom(theme);
+    saveTheme(theme);
+  }, [theme]);
+
+  const handleUpdateTheme = (newTheme) => {
+    setTheme(newTheme);
+  };
+
+  const handleResetTheme = () => {
+    setTheme(DEFAULT_THEME);
+  };
 
   const tweenRef = useRef(null);
 
@@ -146,7 +163,13 @@ export default function App() {
   };
 
   return (
-    <div className="relative w-full min-h-screen bg-[#08172B] text-[#F4F7FC] overflow-x-hidden font-sans">
+    <div 
+      className="relative w-full min-h-screen overflow-x-hidden font-sans transition-colors duration-300"
+      style={{
+        backgroundColor: 'var(--bg-primary)',
+        color: 'var(--text-primary)'
+      }}
+    >
       {/* Loading Screen */}
       {isLoading && (
         <LoadingScreen progress={loadProgress} />
@@ -170,6 +193,7 @@ export default function App() {
           : 'relative w-full h-screen z-10'
       }`}>
         <ThreeCanvas
+          theme={theme}
           headsetType={headsetType}
           explodeProgress={explodeProgress}
           explodeIntensity={explodeIntensity}
@@ -249,6 +273,13 @@ export default function App() {
         onClose={() => setIsGuideOpen(false)}
         modelStats={modelStats}
         onCustomModelLoad={handleCustomModelLoad}
+      />
+
+      {/* Interactive Theme Customizer */}
+      <ThemeCustomizer
+        currentTheme={theme}
+        onUpdateTheme={handleUpdateTheme}
+        onResetTheme={handleResetTheme}
       />
     </div>
   );

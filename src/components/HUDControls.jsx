@@ -65,8 +65,8 @@ export default function HUDControls({
             onClick={() => onSelectFilterCategory?.(c.id)}
             className={`px-3 py-1 rounded-full whitespace-nowrap transition-all font-medium ${
               filterCategory === c.id
-                ? 'bg-[#398BFF] text-[#F4F7FC] font-semibold shadow-[0_0_12px_rgba(57,139,255,0.45)]'
-                : 'text-[#B5C5DA] hover:text-[#F4F7FC]'
+                ? 'bg-[var(--accent-color)] text-[#FFFFFF] font-semibold shadow-[0_0_12px_rgba(var(--accent-rgb),0.45)]'
+                : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
             }`}
           >
             {c.label}
@@ -83,25 +83,25 @@ export default function HUDControls({
             className="navy-pill-btn w-8 h-8 rounded-full"
             title={isPlaying ? "Pause Disassembly" : "Play Cinematic Disassembly"}
           >
-            {isPlaying ? <Pause size={14} className="text-[#398BFF]" /> : <Play size={14} className="ml-0.5 text-[#398BFF]" />}
+            {isPlaying ? <Pause size={14} className="text-[var(--accent-color)]" /> : <Play size={14} className="ml-0.5 text-[var(--accent-color)]" />}
           </button>
 
           <button
             onClick={onToggleExplode}
             className={`px-3.5 h-8 rounded-full font-mono text-xs transition-all flex items-center gap-1.5 ${
               isExploded 
-                ? 'bg-[#398BFF] text-[#F4F7FC] font-semibold shadow-[0_0_14px_rgba(57,139,255,0.5)] border border-white/20' 
+                ? 'bg-[var(--accent-color)] text-[#FFFFFF] font-semibold shadow-[0_0_14px_rgba(var(--accent-rgb),0.5)] border border-white/20' 
                 : 'navy-pill-btn'
             }`}
           >
-            <Layers size={13} className={isExploded ? 'text-white' : 'text-[#398BFF]'} />
+            <Layers size={13} className={isExploded ? 'text-white' : 'text-[var(--accent-color)]'} />
             <span>{isExploded ? 'ASSEMBLE' : 'EXPLODE'}</span>
           </button>
         </div>
 
         {/* Timeline Progress Slider */}
         <div className="flex-1 min-w-[200px] flex items-center gap-3">
-          <span className="font-mono text-[10px] text-[#B5C5DA] uppercase tracking-wider">Scrub</span>
+          <span className="font-mono text-[10px] text-[var(--text-secondary)] uppercase tracking-wider">Scrub</span>
           <div className="relative flex-1 flex items-center">
             <input
               type="range"
@@ -110,17 +110,17 @@ export default function HUDControls({
               step="0.005"
               value={progress}
               onChange={(e) => onSeek(parseFloat(e.target.value))}
-              className="w-full h-1.5 bg-[#173B65]/50 rounded-lg appearance-none cursor-pointer accent-[#398BFF] hover:accent-[#5ea1ff]"
+              className="w-full h-1.5 bg-[var(--gradient-glow)]/60 rounded-lg appearance-none cursor-pointer accent-[var(--accent-color)] hover:accent-[var(--accent-color)]"
             />
           </div>
-          <span className="font-mono text-xs text-[#398BFF] font-semibold min-w-[32px] text-right">
+          <span className="font-mono text-xs text-[var(--accent-color)] font-semibold min-w-[32px] text-right">
             {Math.round(progress * 100)}%
           </span>
         </div>
 
         {/* Separation Distance Multiplier */}
-        <div className="hidden sm:flex items-center gap-2 border-l border-[#398BFF]/20 pl-4">
-          <span className="font-mono text-[10px] text-[#B5C5DA] uppercase tracking-wider">Spread</span>
+        <div className="hidden sm:flex items-center gap-2 border-l border-[var(--accent-color)]/20 pl-4">
+          <span className="font-mono text-[10px] text-[var(--text-secondary)] uppercase tracking-wider">Spread</span>
           <input
             type="range"
             min="0.6"
@@ -128,10 +128,10 @@ export default function HUDControls({
             step="0.05"
             value={intensity}
             onChange={(e) => onChangeIntensity(parseFloat(e.target.value))}
-            className="w-16 h-1.5 bg-[#173B65]/50 rounded appearance-none cursor-pointer accent-[#398BFF]"
+            className="w-16 h-1.5 bg-[var(--gradient-glow)]/60 rounded appearance-none cursor-pointer accent-[var(--accent-color)]"
             title="Separation Distance Multiplier"
           />
-          <span className="font-mono text-[10px] text-[#F4F7FC] min-w-[24px]">
+          <span className="font-mono text-[10px] text-[var(--text-primary)] min-w-[24px]">
             {intensity.toFixed(1)}x
           </span>
         </div>
@@ -144,11 +144,11 @@ export default function HUDControls({
           className="navy-pill-btn px-2.5 h-7 rounded-full text-xs gap-1"
           title="Reset Camera Position"
         >
-          <RotateCcw size={12} className="text-[#398BFF]" />
+          <RotateCcw size={12} className="text-[var(--accent-color)]" />
           <span className="hidden md:inline">Reset</span>
         </button>
 
-        <div className="w-px h-3.5 bg-[#398BFF]/25 mx-1" />
+        <div className="w-px h-3.5 bg-[var(--accent-color)]/25 mx-1" />
 
         {/* Presets */}
         <div className="flex items-center gap-1">
@@ -158,8 +158,8 @@ export default function HUDControls({
               onClick={() => onSelectCameraPreset(p.id)}
               className={`px-2.5 h-6 rounded-full text-xs font-medium transition-all ${
                 cameraPreset === p.id 
-                  ? 'bg-[#398BFF] text-[#F4F7FC] font-semibold shadow-[0_0_10px_rgba(57,139,255,0.4)]' 
-                  : 'text-[#B5C5DA] hover:text-[#F4F7FC]'
+                  ? 'bg-[var(--accent-color)] text-[#FFFFFF] font-semibold shadow-[0_0_10px_rgba(var(--accent-rgb),0.4)]' 
+                  : 'text-[var(--text-secondary)] hover:text-[var(--text-primary)]'
               }`}
             >
               {p.label}
@@ -167,13 +167,13 @@ export default function HUDControls({
           ))}
         </div>
 
-        <div className="w-px h-3.5 bg-[#398BFF]/25 mx-1" />
+        <div className="w-px h-3.5 bg-[var(--accent-color)]/25 mx-1" />
 
         {/* Labels Toggle */}
         <button
           onClick={onToggleLabels}
           className={`navy-pill-btn px-2.5 h-7 rounded-full text-xs gap-1 ${
-            showLabels ? 'bg-[#398BFF]/20 text-[#398BFF] border-[#398BFF]' : 'text-[#B5C5DA]'
+            showLabels ? 'bg-[var(--accent-color)]/20 text-[var(--accent-color)] border-[var(--accent-color)]' : 'text-[var(--text-secondary)]'
           }`}
           title="Toggle 3D Component Labels"
         >
@@ -185,11 +185,11 @@ export default function HUDControls({
         <button
           onClick={onToggleDrawer}
           className={`navy-pill-btn px-3 h-7 rounded-full text-xs gap-1.5 ${
-            isDrawerOpen ? 'bg-[#398BFF] text-[#F4F7FC] font-semibold shadow-[0_0_10px_rgba(57,139,255,0.4)]' : ''
+            isDrawerOpen ? 'bg-[var(--accent-color)] text-[#FFFFFF] font-semibold shadow-[0_0_10px_rgba(var(--accent-rgb),0.4)]' : ''
           }`}
           title="Inspect All Components"
         >
-          <Box size={12} className="text-[#398BFF]" />
+          <Box size={12} className="text-[var(--accent-color)]" />
           <span>Parts ({componentsCount})</span>
         </button>
 

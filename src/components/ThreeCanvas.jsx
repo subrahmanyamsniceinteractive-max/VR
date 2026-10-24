@@ -9,8 +9,10 @@ import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import gsap from 'gsap';
 import quest3Data from '../data/componentsData.json';
 import visionProData from '../data/visionProData.json';
+import { isLightColor } from '../utils/themeManager';
 
 export default function ThreeCanvas({
+  theme = null,
   headsetType = 'quest3', // 'quest3' | 'vision_pro'
   explodeProgress = 0,
   explodeIntensity = 1.0,
@@ -41,6 +43,14 @@ export default function ThreeCanvas({
   const animFrameIdRef = useRef(null);
   const isInteractingRef = useRef(false);
 
+  // Theme Sync Refs for Dynamic Studio Updates
+  const bgCanvasRef = useRef(null);
+  const bgTextureRef = useRef(null);
+  const rimLightRef = useRef(null);
+  const hemiLightRef = useRef(null);
+  const shadowCanvasRef = useRef(null);
+  const shadowTexRef = useRef(null);
+
   const activeComponentsData = headsetType === 'quest3' ? quest3Data : visionProData;
   const activeModelPath = customModelUrl || (headsetType === 'quest3' 
     ? '/models/quest3_exploded.glb' 
@@ -58,21 +68,29 @@ export default function ThreeCanvas({
     const scene = new THREE.Scene();
     
     // High-resolution procedural radial gradient backdrop
+    const initialGlow = theme?.glowColor || '#173B65';
+    const initialSec = theme?.secondaryBg || '#102744';
+    const initialScene = theme?.sceneBg || '#08172B';
+    const initialAccent = theme?.accentColor || '#398BFF';
+
     const bgCanvas = document.createElement('canvas');
     bgCanvas.width = 1024;
     bgCanvas.height = 1024;
     const bgCtx = bgCanvas.getContext('2d');
     const radialGrad = bgCtx.createRadialGradient(512, 512, 30, 512, 512, 620);
-    radialGrad.addColorStop(0, '#173B65');
-    radialGrad.addColorStop(0.48, '#102744');
-    radialGrad.addColorStop(1, '#08172B');
+    radialGrad.addColorStop(0, initialGlow);
+    radialGrad.addColorStop(0.48, initialSec);
+    radialGrad.addColorStop(1, initialScene);
     bgCtx.fillStyle = radialGrad;
     bgCtx.fillRect(0, 0, 1024, 1024);
     const bgTexture = new THREE.CanvasTexture(bgCanvas);
     bgTexture.colorSpace = THREE.SRGBColorSpace;
     scene.background = bgTexture;
-    scene.fog = new THREE.FogExp2(0x08172B, 0.012);
+    scene.fog = new THREE.FogExp2(initialScene, 0.012);
     sceneRef.current = scene;
+
+    bgCanvasRef.current = bgCanvas;
+    bgTextureRef.current = bgTexture;
 
     // Medium-wide product camera view (distortion-free 36° FOV at ~29.5 units distance)
     const camera = new THREE.PerspectiveCamera(36, width / height, 0.1, 120);
@@ -178,21 +196,23 @@ export default function ThreeCanvas({
     keyLight.shadow.camera.bottom = -16;
     scene.add(keyLight);
 
-    // Restrained Accent Blue Rim Lighting (#398BFF) on product silhouette
-    const rimLight = new THREE.DirectionalLight(0x398bff, 1.75);
+    // Restrained Accent Rim Lighting on product silhouette
+    const rimLight = new THREE.DirectionalLight(initialAccent, 1.75);
     rimLight.position.set(-18, 14, -18);
     scene.add(rimLight);
+    rimLightRef.current = rimLight;
 
-    // Soft daylight fill (#EAF2FC)
+    // Soft daylight fill
     const fillLight = new THREE.DirectionalLight(0xeaf2fc, 1.15);
     fillLight.position.set(-16, -8, 14);
     scene.add(fillLight);
 
-    // Subtle blue glow ambient (#173B65 sky, #08172B deep navy ground)
-    const hemiLight = new THREE.HemisphereLight(0x173b65, 0x08172b, 0.85);
+    // Subtle glow ambient (sky & ground)
+    const hemiLight = new THREE.HemisphereLight(initialGlow, initialScene, 0.85);
     scene.add(hemiLight);
+    hemiLightRef.current = hemiLight;
 
-    // Deep Navy Contact Ground Shadow Plane
+    // Contact Ground Shadow Plane
     const shadowCanvas = document.createElement('canvas');
     shadowCanvas.width = 512;
     shadowCanvas.height = 512;
@@ -206,6 +226,9 @@ export default function ThreeCanvas({
     ctx.fillRect(0, 0, 512, 512);
 
     const shadowTex = new THREE.CanvasTexture(shadowCanvas);
+    shadowCanvasRef.current = shadowCanvas;
+    shadowTexRef.current = shadowTex;
+
     const shadowPlane = new THREE.Mesh(
       new THREE.PlaneGeometry(36, 36),
       new THREE.MeshBasicMaterial({
@@ -816,6 +839,63 @@ export default function ThreeCanvas({
     });
   }, [filterCategory, activeComponentsData]);
 
+  // Live Sync Theme with Three.js (Scene Backdrop, Fog, Rim Light, Ambient Light, Shadows)
+  useEffect(() => {
+    if (!theme || !sceneRef.current) return;
+
+    // 1. Update procedural radial gradient backdrop
+    const bgCanvas = bgCanvasRef.current;
+    if (bgCanvas && bgTextureRef.current) {
+      const bgCtx = bgCanvas.getContext('2d');
+      const radialGrad = bgCtx.createRadialGradient(512, 512, 30, 512, 512, 620);
+      radialGrad.addColorStop(0, theme.glowColor || '#173B65');
+      radialGrad.addColorStop(0.48, theme.secondaryBg || '#102744');
+      radialGrad.addColorStop(1, theme.sceneBg || '#08172B');
+      bgCtx.fillStyle = radialGrad;
+      bgCtx.fillRect(0, 0, 1024, 1024);
+      bgTextureRef.current.needsUpdate = true;
+    }
+
+    // 2. Update Scene Fog
+    if (sceneRef.current.fog && theme.sceneBg) {
+      sceneRef.current.fog.color.set(theme.sceneBg);
+    }
+
+    // 3. Update Rim Light
+    if (rimLightRef.current && theme.accentColor) {
+      rimLightRef.current.color.set(theme.accentColor);
+    }
+
+    // 4. Update Ambient / Hemisphere Light
+    if (hemiLightRef.current) {
+      if (theme.glowColor) hemiLightRef.current.color.set(theme.glowColor);
+      if (theme.sceneBg) hemiLightRef.current.groundColor.set(theme.sceneBg);
+    }
+
+    // 5. Update Contact Shadow
+    const shadowCanvas = shadowCanvasRef.current;
+    if (shadowCanvas && shadowTexRef.current) {
+      const ctx = shadowCanvas.getContext('2d');
+      ctx.clearRect(0, 0, 512, 512);
+      const grad = ctx.createRadialGradient(256, 256, 0, 256, 256, 256);
+      const isLight = isLightColor(theme.sceneBg);
+      if (isLight) {
+        grad.addColorStop(0, 'rgba(0, 0, 0, 0.40)');
+        grad.addColorStop(0.35, 'rgba(0, 0, 0, 0.18)');
+        grad.addColorStop(0.7, 'rgba(0, 0, 0, 0.06)');
+        grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+      } else {
+        grad.addColorStop(0, 'rgba(5, 15, 28, 0.90)');
+        grad.addColorStop(0.35, 'rgba(8, 23, 43, 0.52)');
+        grad.addColorStop(0.7, 'rgba(16, 39, 68, 0.16)');
+        grad.addColorStop(1, 'rgba(8, 23, 43, 0)');
+      }
+      ctx.fillStyle = grad;
+      ctx.fillRect(0, 0, 512, 512);
+      shadowTexRef.current.needsUpdate = true;
+    }
+  }, [theme]);
+
   // 4. Handle Camera Presets
   useEffect(() => {
     if (!cameraPreset) return;
@@ -969,13 +1049,13 @@ export default function ThreeCanvas({
                 >
                   <div className={`px-2.5 py-1 rounded-md text-xs flex items-center gap-2 shadow-lg border backdrop-blur-md transition-colors ${
                     isSelected 
-                      ? 'bg-[#398BFF] text-[#F4F7FC] border-[#398BFF] font-medium shadow-[#398BFF]/30' 
-                      : 'navy-glass text-[#F4F7FC] border-[rgba(57,139,255,0.25)] hover:border-[#398BFF]'
+                      ? 'bg-[var(--accent-color)] text-[#FFFFFF] border-[var(--accent-color)] font-medium shadow-[var(--accent-color)]/30' 
+                      : 'navy-glass text-[var(--text-primary)] border-[var(--accent-color)]/25 hover:border-[var(--accent-color)]'
                   }`}>
-                    <span className="font-mono text-[10px] text-[#B5C5DA]">0{idx + 1}</span>
+                    <span className="font-mono text-[10px] text-[var(--text-secondary)]">0{idx + 1}</span>
                     <span className="text-[11px] whitespace-nowrap font-sans">{lbl.name}</span>
                   </div>
-                  <div className="w-px h-3 bg-[#398BFF]/60 mx-auto" />
+                  <div className="w-px h-3 bg-[var(--accent-color)]/60 mx-auto" />
                 </div>
               );
             })}

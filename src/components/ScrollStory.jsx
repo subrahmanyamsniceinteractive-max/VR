@@ -157,12 +157,12 @@ export default function ScrollStory({
   return (
     <div ref={containerRef} className="relative z-20 pointer-events-none">
       {/* Scroll Down Prompt */}
-      <div className="absolute top-[88vh] left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 pointer-events-auto text-[#B5C5DA] font-mono text-[11px] tracking-wider uppercase">
+      <div className="absolute top-[88vh] left-1/2 -translate-x-1/2 flex flex-col items-center gap-1.5 pointer-events-auto text-[var(--text-secondary)] font-mono text-[11px] tracking-wider uppercase">
         <span>Scroll to inspect architecture</span>
-        <ChevronDown size={14} className="text-[#398BFF] animate-bounce" />
+        <ChevronDown size={14} className="text-[var(--accent-color)] animate-bounce" />
       </div>
 
-      {/* Story Sections: Alternating Deep Navy & Ice-White Technical Sections */}
+      {/* Story Sections: Alternating Navy & Light Technical Sections */}
       {sections.map((sec, idx) => {
         const isLight = sec.theme === 'light-tech';
         const isHeroDark = sec.theme === 'dark-hero';
@@ -178,20 +178,16 @@ export default function ScrollStory({
             } ${
               isLight
                 ? 'light-tech-card'
-                : isHeroDark
-                  ? 'navy-glass'
-                  : 'bg-[#102744]/85 backdrop-blur-2xl border border-[rgba(57,139,255,0.25)] shadow-2xl shadow-[#08172B]/80 text-[#F4F7FC]'
+                : 'navy-glass'
             }`}>
               
               {/* Category & Badge Header */}
               <div className="flex items-center justify-between mb-4 pb-3 border-b border-current/10">
-                <span className={`font-mono text-[10px] tracking-wider uppercase font-semibold ${
-                  isLight ? 'text-[#398BFF]' : 'text-[#B5C5DA]'
-                }`}>
+                <span className={`font-mono text-[10px] tracking-wider uppercase font-semibold text-[var(--accent-color)]`}>
                   {sec.badge}
                 </span>
                 <span className={`font-mono text-xs font-semibold ${
-                  isLight ? 'text-[#08172B]/60' : 'text-[#B5C5DA]/70'
+                  isLight ? 'text-[var(--text-light-tech)]/60' : 'text-[var(--text-secondary)]/70'
                 }`}>
                   0{idx + 1} / 07
                 </span>
@@ -199,19 +195,17 @@ export default function ScrollStory({
 
               {/* Title & Subtitle */}
               <h2 className={`text-2xl md:text-3xl font-semibold tracking-tight mb-1.5 ${
-                isLight ? 'text-[#08172B]' : 'text-[#F4F7FC]'
+                isLight ? 'text-[var(--text-light-tech)]' : 'text-[var(--text-primary)]'
               }`}>
                 {sec.title}
               </h2>
-              <h4 className={`text-xs font-mono tracking-wide mb-4 font-medium ${
-                isLight ? 'text-[#398BFF]' : 'text-[#B5C5DA]'
-              }`}>
+              <h4 className={`text-xs font-mono tracking-wide mb-4 font-medium text-[var(--accent-color)]`}>
                 {sec.subtitle}
               </h4>
 
               {/* Narrative Prose */}
               <p className={`text-xs md:text-sm leading-relaxed mb-6 font-normal ${
-                isLight ? 'text-[#08172B]/80' : 'text-[#B5C5DA]'
+                isLight ? 'text-[var(--text-light-tech)]/80' : 'text-[var(--text-secondary)]'
               }`}>
                 {sec.desc}
               </p>
@@ -223,16 +217,16 @@ export default function ScrollStory({
                     key={mIdx} 
                     className={`p-2.5 rounded-xl border ${
                       isLight 
-                        ? 'bg-white/80 border-[#398BFF]/20 text-[#08172B]' 
-                        : 'bg-[#08172B]/60 border-[rgba(57,139,255,0.18)] text-[#F4F7FC]'
+                        ? 'bg-black/5 border-[var(--accent-color)]/20 text-[var(--text-light-tech)]' 
+                        : 'bg-[var(--bg-primary)]/60 border-[var(--accent-color)]/20 text-[var(--text-primary)]'
                     }`}
                   >
                     <span className={`block text-[9px] font-mono tracking-wider mb-0.5 ${
-                      isLight ? 'text-[#08172B]/60' : 'text-[#B5C5DA]'
+                      isLight ? 'text-[var(--text-light-tech)]/60' : 'text-[var(--text-secondary)]'
                     }`}>
                       {m.label}
                     </span>
-                    <span className="font-mono text-[11px] font-semibold text-[#398BFF]">
+                    <span className="font-mono text-[11px] font-semibold text-[var(--accent-color)]">
                       {m.val}
                     </span>
                   </div>
@@ -241,7 +235,7 @@ export default function ScrollStory({
 
               {/* Footer Progress & CTA */}
               <div className="flex items-center justify-between pt-4 border-t border-current/10 text-xs font-mono">
-                <span className={isLight ? 'text-[#08172B]/60' : 'text-[#B5C5DA]'}>
+                <span className={isLight ? 'text-[var(--text-light-tech)]/60' : 'text-[var(--text-secondary)]'}>
                   Disassembly: {Math.round(sec.progress * 100)}%
                 </span>
                 {idx === sections.length - 1 ? (
@@ -253,9 +247,7 @@ export default function ScrollStory({
                     <ArrowRight size={13} />
                   </button>
                 ) : (
-                  <span className={`text-[10px] tracking-wider uppercase font-semibold ${
-                    isLight ? 'text-[#398BFF]' : 'text-[#B5C5DA]'
-                  }`}>
+                  <span className={`text-[10px] tracking-wider uppercase font-semibold text-[var(--accent-color)]`}>
                     Scroll to continue →
                   </span>
                 )}
