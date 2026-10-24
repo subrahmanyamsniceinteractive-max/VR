@@ -1,12 +1,12 @@
 [
   {
     "id": "exterior_faceplate",
-    "name": "Front Faceplate",
+    "name": "Front Faceplate Visor",
     "group": "group_exterior",
-    "groupName": "GROUP A \u2014 EXTERIOR",
-    "category": "Exterior & Structure",
-    "specs": "Matte injection-molded polycarbonate visor shell, 3 camera pill apertures, laser-debossed Meta logo, snap-fit internal perimeter clips.",
-    "description": "Forms the signature sleek white front aesthetic of the Quest 3. Houses precision apertures for the dual stereoscopic RGB color passthrough cameras and active depth sensor while aerodynamically directing airflow.",
+    "groupName": "EXTERIOR & HOUSING",
+    "category": "Exterior Shell",
+    "specs": "Matte injection-molded polymer visor, 3 precision optical pill cutouts, debossed Meta emblem, snap-fit chassis clips.",
+    "description": "Forms the front aerodynamic aesthetic of the headset. Encloses the dual stereoscopic RGB cameras and central active depth sensor array while channeling internal airflow.",
     "verified": true,
     "assembled": [
       0.0,
@@ -16,23 +16,23 @@
     "exploded": [
       0.0,
       0.0,
-      13.5
+      14.0
     ],
     "cameraTarget": [
       0.0,
       0.0,
-      13.5
+      14.0
     ],
     "cameraDist": 16.0
   },
   {
     "id": "exterior_housing",
-    "name": "Exterior Housing & Frame",
+    "name": "Main Chassis & Perimeter Housing",
     "group": "group_exterior",
-    "groupName": "GROUP A \u2014 EXTERIOR",
-    "category": "Exterior & Structure",
-    "specs": "High-rigidity structural polycarbonate enclosure, continuous IPD wheel slot, volume rocker switches, top exhaust airflow channels, 3.5mm and USB-C port bezels.",
-    "description": "Encloses all internal optical, computing, and thermal assemblies into a single rigid chassis, maintaining millimeter-accurate sensor-to-display calibration and impact protection.",
+    "groupName": "EXTERIOR & HOUSING",
+    "category": "Chassis & Frame",
+    "specs": "High-rigidity structural polycarbonate enclosure, continuous IPD dial wheel slot, volume rocker, top ventilation exhaust grilles.",
+    "description": "Forms the structural core enclosing optical, computing, and thermal subassemblies into a rigid, impact-resistant chassis.",
     "verified": true,
     "assembled": [
       0.0,
@@ -53,12 +53,12 @@
   },
   {
     "id": "exterior_sensors",
-    "name": "Tracking Cameras & Sensor Assemblies",
+    "name": "Perception Sensor & Camera Cluster",
     "group": "group_exterior",
-    "groupName": "GROUP A \u2014 EXTERIOR",
-    "category": "Perception & Spatial Tracking",
-    "specs": "2x 4MP stereoscopic RGB 18 PPD passthrough cameras, 1x active VCSEL IR depth projector + receiver, 2x wide-angle 6DoF IR corner tracking cameras (60Hz tracking rate).",
-    "description": "Enables high-fidelity color mixed-reality passthrough, spatial room meshing, and controller-free hand tracking with sub-millimeter positional precision.",
+    "groupName": "SENSORS & TRACKING",
+    "category": "Spatial Tracking",
+    "specs": "2x 4MP RGB 18 PPD passthrough cameras, 1x active VCSEL IR depth sensor, 2x wide-angle 6DoF corner tracking cameras.",
+    "description": "Captures stereoscopic color video passthrough and sub-millimeter hand tracking, projecting real-time room depth maps.",
     "verified": true,
     "assembled": [
       0.0,
@@ -68,23 +68,23 @@
     "exploded": [
       0.0,
       0.0,
-      16.5
+      17.0
     ],
     "cameraTarget": [
       0.0,
       0.0,
-      16.5
+      17.0
     ],
     "cameraDist": 12.0
   },
   {
     "id": "exterior_side_arms",
-    "name": "Side Arms & Adjustment Components",
+    "name": "Temple Arms & Spatial Audio Chambers",
     "group": "group_exterior",
-    "groupName": "GROUP A \u2014 EXTERIOR",
-    "category": "Audio & Ergonomics",
-    "specs": "Dual balanced spatial audio speakers with tuned waveguide acoustic sound pipes, rotational temple friction hinges, USB-C 3.0 internal passthrough harness.",
-    "description": "Directs 3D spatial audio straight toward the wearer's ears with enhanced bass response and 40% louder volume than Quest 2, while providing smooth rotational tilting for comfort.",
+    "groupName": "AUDIO & ERGONOMICS",
+    "category": "Acoustics & Ergonomics",
+    "specs": "Dual balanced spatial audio sound chambers with tuned waveguides, rotational temple friction hinges, USB-C passthrough.",
+    "description": "Directs 3D spatial audio toward the ears with 40% louder volume than Quest 2, while providing smooth rotational tilting for comfort.",
     "verified": true,
     "assembled": [
       0.0,
@@ -105,12 +105,12 @@
   },
   {
     "id": "optics_lens_left",
-    "name": "Left Pancake Lens Assembly",
+    "name": "Left Folded Pancake Optical Module",
     "group": "group_optics",
-    "groupName": "GROUP B \u2014 OPTICAL SYSTEM",
+    "groupName": "OPTICS & DISPLAY",
     "category": "Optical Engineering",
-    "specs": "Multi-element folded pancake optics, 110\u00b0 diagonal field of view, polarized beam splitter, quarter-wave retarding film, 40% slimmer optical profile than Fresnel lenses.",
-    "description": "Drastically reduces headset thickness by folding light back and forth between polarizing surfaces, providing edge-to-edge optical clarity and eliminating God rays.",
+    "specs": "Multi-element folded pancake optics, 110\u00b0 diagonal FOV, polarizing beam splitter, quarter-wave retarding element.",
+    "description": "Folds light back and forth between polarizing surfaces, drastically reducing optical stack depth while eliminating visual glare.",
     "verified": true,
     "assembled": [
       0.0,
@@ -131,12 +131,12 @@
   },
   {
     "id": "optics_lens_right",
-    "name": "Right Pancake Lens Assembly",
+    "name": "Right Folded Pancake Optical Module",
     "group": "group_optics",
-    "groupName": "GROUP B \u2014 OPTICAL SYSTEM",
+    "groupName": "OPTICS & DISPLAY",
     "category": "Optical Engineering",
-    "specs": "Multi-element folded pancake optics, 110\u00b0 diagonal field of view, polarized beam splitter, precision optical retaining barrel.",
-    "description": "Provides matched stereoscopic visual acuity for the right eye with ultra-sharp center and peripheral focus across the entire visual field.",
+    "specs": "Multi-element folded pancake optics, 110\u00b0 diagonal FOV, polarizing beam splitter, precision black anodized retaining barrel.",
+    "description": "Provides matched stereoscopic visual acuity for the right eye with ultra-sharp edge-to-edge optical resolution.",
     "verified": true,
     "assembled": [
       0.0,
@@ -157,11 +157,11 @@
   },
   {
     "id": "optics_displays",
-    "name": "Dual Fast-Switch LCD Display Panels",
+    "name": "Dual Fast-Switch LCD Displays",
     "group": "group_optics",
-    "groupName": "GROUP B \u2014 OPTICAL SYSTEM",
+    "groupName": "OPTICS & DISPLAY",
     "category": "Display Technology",
-    "specs": "Dual Fast-Switch LCDs, 2064 x 2208 pixels per eye (4.55 million pixels per eye), 90Hz / 120Hz refresh rates, quantum dot optical enhancement, high-speed MIPI D-PHY interface.",
+    "specs": "Dual Fast-Switch LCDs, 2064 x 2208 pixels per eye (4.55 million pixels per eye), 90Hz / 120Hz refresh rates, MIPI D-PHY.",
     "description": "Delivers nearly 30% higher resolution than Quest 2 with crisp text readability and smooth motion rendering for immersive VR and MR experiences.",
     "verified": true,
     "assembled": [
@@ -183,12 +183,12 @@
   },
   {
     "id": "optics_brackets",
-    "name": "Optical Brackets & IPD Mechanism",
+    "name": "Magnesium Carrier Frame & IPD Mechanism",
     "group": "group_optics",
-    "groupName": "GROUP B \u2014 OPTICAL SYSTEM",
+    "groupName": "OPTICS & DISPLAY",
     "category": "Mechanical Engineering",
-    "specs": "Die-cast magnesium-aluminum carrier frame, stainless steel guide rails, precision rack-and-pinion IPD gear drive supporting continuous 58mm\u201371mm interpupillary range.",
-    "description": "Provides micro-adjustable physical spacing between the optical modules, enabling users to seamlessly dial in their exact eye distance for maximum comfort and sharpest focus.",
+    "specs": "Die-cast magnesium-aluminum carrier frame, stainless steel guide rails, precision rack-and-pinion IPD gear drive (58mm\u201371mm).",
+    "description": "Provides micro-adjustable physical spacing between the optical modules, enabling users to seamlessly dial in their exact eye distance.",
     "verified": true,
     "assembled": [
       0.0,
@@ -209,12 +209,12 @@
   },
   {
     "id": "electronics_motherboard",
-    "name": "Main Circuit Board (PCB)",
+    "name": "Main Logic Board (10-Layer HDI PCB)",
     "group": "group_electronics",
-    "groupName": "GROUP C \u2014 ELECTRONICS",
+    "groupName": "COMPUTE & ELECTRONICS",
     "category": "Compute Architecture",
-    "specs": "10-layer high-density interconnect (HDI) PCB, nickel-plated EMI shielding cans, multiple PMIC voltage regulators, high-speed differential signal traces.",
-    "description": "The central nervous system of the headset. Interconnects processing silicon, sensor pipelines, high-bandwidth displays, and power management onto a compact contoured board.",
+    "specs": "10-layer high-density interconnect (HDI) PCB, nickel-plated EMI shielding cans, high-speed differential signal traces.",
+    "description": "The central computing motherboard interconnecting processing silicon, sensor pipelines, high-bandwidth displays, and power rails.",
     "verified": true,
     "assembled": [
       0.0,
@@ -237,10 +237,10 @@
     "id": "electronics_snapdragon_xr2",
     "name": "Qualcomm Snapdragon XR2 Gen 2 Platform",
     "group": "group_electronics",
-    "groupName": "GROUP C \u2014 ELECTRONICS",
-    "category": "Compute Architecture",
-    "specs": "Qualcomm Snapdragon XR2 Gen 2 (SXR2230P), 4nm TSMC process node, Adreno 740 GPU (2.5x graphic performance of XR2 Gen 1), 12GB LPDDR5 RAM, Hexagon dual-core NPU.",
-    "description": "Drives next-generation spatial computing, real-time depth calculation, photorealistic lighting shaders, and low-latency mixed-reality perception.",
+    "groupName": "COMPUTE & ELECTRONICS",
+    "category": "Silicon Architecture",
+    "specs": "Qualcomm Snapdragon XR2 Gen 2 (SXR2230P), 4nm TSMC process node, Adreno 740 GPU, 12GB LPDDR5 RAM, Hexagon dual-core NPU.",
+    "description": "Delivers 2.5x the graphic processing performance of Quest 2, handling dynamic lighting shaders, 120Hz refresh rates, and low-latency computer vision.",
     "verified": true,
     "assembled": [
       0.0,
@@ -260,65 +260,13 @@
     "cameraDist": 8.0
   },
   {
-    "id": "electronics_connectivity_rf",
-    "name": "Tracking & Connectivity Electronics",
-    "group": "group_electronics",
-    "groupName": "GROUP C \u2014 ELECTRONICS",
-    "category": "Wireless & Sensors",
-    "specs": "Qualcomm FastConnect 7800 Wi-Fi 6E (802.11ax) & Bluetooth 5.2 subsystem, InvenSense 6-axis ultra-low-drift IMU (gyroscope + accelerometer), quad beamforming spatial microphones.",
-    "description": "Ensures lag-free wireless PC VR streaming over 6GHz bands, instantaneous head-rotation motion capture, and crystal-clear spatial voice pickup.",
-    "verified": true,
-    "assembled": [
-      0.0,
-      0.0,
-      0.0
-    ],
-    "exploded": [
-      7.0,
-      5.5,
-      2.0
-    ],
-    "cameraTarget": [
-      7.0,
-      5.5,
-      2.0
-    ],
-    "cameraDist": 10.0
-  },
-  {
-    "id": "electronics_flex_cables",
-    "name": "Internal Connectors & Flex Cables",
-    "group": "group_electronics",
-    "groupName": "GROUP C \u2014 ELECTRONICS",
-    "category": "Signal Distribution",
-    "specs": "Translucent amber Kapton polyimide Flexible Flat Circuits (FFC), high-density gold micro-strip traces, locking ZIF board-to-board micro headers.",
-    "description": "Distributes high-speed video signals, sensor data, and power across the optical and computing layers with high flexibility and resistance to thermal expansion.",
-    "verified": true,
-    "assembled": [
-      0.0,
-      0.0,
-      0.0
-    ],
-    "exploded": [
-      0.0,
-      4.0,
-      3.0
-    ],
-    "cameraTarget": [
-      0.0,
-      4.0,
-      3.0
-    ],
-    "cameraDist": 12.0
-  },
-  {
     "id": "electronics_cooling_fan_heatsink",
-    "name": "Cooling Components (Fan & Heat Pipe)",
+    "name": "Sintered Copper Heat Pipe & Radial Blower Fan",
     "group": "group_electronics",
-    "groupName": "GROUP C \u2014 ELECTRONICS",
+    "groupName": "THERMAL DYNAMICS",
     "category": "Thermal Engineering",
-    "specs": "Centrifugal radial micro-blower fan with dynamic PWM speed control, sintered copper heat pipe with vapor chamber base, stacked aluminum micro-fins cooling radiator.",
-    "description": "Actively exhausts heat generated by the Snapdragon XR2 Gen 2 through top vents, preventing thermal throttling during intensive mixed-reality workloads while running near-silently.",
+    "specs": "Sintered pure copper heat pipe with vapor chamber base, stacked aluminum micro-fin radiator, centrifugal radial micro-blower fan.",
+    "description": "Actively exhausts heat from the Snapdragon XR2 die through top vent slots, preventing thermal throttling during intensive mixed-reality workloads.",
     "verified": true,
     "assembled": [
       0.0,
@@ -339,12 +287,12 @@
   },
   {
     "id": "power_battery",
-    "name": "Battery Assembly",
+    "name": "Curved 5,060 mAh Lithium Polymer Battery",
     "group": "group_power",
-    "groupName": "GROUP D \u2014 POWER SYSTEM",
+    "groupName": "POWER MANAGEMENT",
     "category": "Energy Storage",
-    "specs": "Rechargeable Lithium-Ion Polymer cell (Model FB40), 5,060 mAh capacity (19.44 Wh nominal @ 3.85V, 4.40V cutoff), curved form factor optimized for center-of-gravity balance.",
-    "description": "Supplies 2.0 to 2.5 hours of continuous wireless VR/MR operation. Centrally placed low in the headset frame to drastically reduce neck torque and rotational inertia.",
+    "specs": "Rechargeable Lithium-Ion Polymer cell (Model FB40), 5,060 mAh capacity (19.44 Wh nominal @ 3.85V, 4.40V cutoff), curved form factor.",
+    "description": "Supplies 2.0 to 2.5 hours of continuous wireless VR/MR operation. Centrally placed low in the headset frame to drastically reduce neck torque.",
     "verified": true,
     "assembled": [
       0.0,
@@ -365,12 +313,12 @@
   },
   {
     "id": "power_connectors",
-    "name": "Power Connectors & Wiring",
+    "name": "Heavy-Duty Power Wiring Harness",
     "group": "group_power",
-    "groupName": "GROUP D \u2014 POWER SYSTEM",
+    "groupName": "POWER MANAGEMENT",
     "category": "Power Distribution",
-    "specs": "High-current multi-conductor silicone wire harness, gold-plated locking power header, inline EMI noise filter ferrite bead, battery thermistor sensor leads.",
-    "description": "Safely routes high-current power from the battery through the protection circuitry to the mainboard, monitoring cell temperatures and voltage balance in real time.",
+    "specs": "Silicone insulated red/black multi-strand copper harness, locking gold-plated battery terminal, inline ferrite suppression bead.",
+    "description": "Safely routes high-current power from the battery through the protection circuitry to the mainboard, monitoring cell temperatures and voltage balance.",
     "verified": true,
     "assembled": [
       0.0,
@@ -390,12 +338,64 @@
     "cameraDist": 10.0
   },
   {
+    "id": "electronics_flex_cables",
+    "name": "Polyimide Kapton Flex Ribbon Circuits",
+    "group": "group_electronics",
+    "groupName": "SIGNAL DISTRIBUTION",
+    "category": "Interconnects",
+    "specs": "Translucent amber Kapton polyimide Flexible Flat Circuits (FFC), high-density gold micro-strip traces, locking ZIF board headers.",
+    "description": "Distributes high-speed video signals, sensor data, and power across the optical and computing layers with high flexibility and resistance to thermal expansion.",
+    "verified": true,
+    "assembled": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "exploded": [
+      0.0,
+      4.0,
+      3.0
+    ],
+    "cameraTarget": [
+      0.0,
+      4.0,
+      3.0
+    ],
+    "cameraDist": 12.0
+  },
+  {
+    "id": "electronics_connectivity_rf",
+    "name": "Wireless Subsystem & 6DoF IMU Hub",
+    "group": "group_electronics",
+    "groupName": "WIRELESS & SENSORS",
+    "category": "Wireless Subsystem",
+    "specs": "Qualcomm FastConnect 7800 Wi-Fi 6E & Bluetooth 5.2 ceramic antennas, InvenSense 6-axis ultra-low-drift IMU, quad beamforming mics.",
+    "description": "Ensures lag-free wireless PC VR streaming over 6GHz bands, instantaneous head-rotation motion capture, and spatial voice pickup.",
+    "verified": true,
+    "assembled": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "exploded": [
+      7.0,
+      5.5,
+      2.0
+    ],
+    "cameraTarget": [
+      7.0,
+      5.5,
+      2.0
+    ],
+    "cameraDist": 10.0
+  },
+  {
     "id": "comfort_facial_interface",
-    "name": "Facial Interface",
+    "name": "Ergonomic Facial Interface Mount",
     "group": "group_comfort",
-    "groupName": "GROUP E \u2014 FIT AND COMFORT",
-    "category": "Ergonomics & Fit",
-    "specs": "Anatomically contoured dark charcoal polycarbonate frame with nasal bridge arch, dual 4-position eye-relief depth adjustment buttons for eyeglass wearers, anti-fog baffles.",
+    "groupName": "FIT & ERGONOMICS",
+    "category": "Ergonomics",
+    "specs": "Anatomically contoured dark charcoal polycarbonate frame with nasal bridge arch, dual 4-position eye-relief sliding depth adjusters.",
     "description": "Ergonomically bridges the headset to the human face. Allows the user to slide the headset closer or further from their glasses while preventing lens fogging.",
     "verified": true,
     "assembled": [
@@ -416,39 +416,13 @@
     "cameraDist": 16.0
   },
   {
-    "id": "comfort_head_strap",
-    "name": "Head Strap & Adjustment Mechanism",
-    "group": "group_comfort",
-    "groupName": "GROUP E \u2014 FIT AND COMFORT",
-    "category": "Ergonomics & Fit",
-    "specs": "Y-shaped flexible woven elastic strap, hook-and-loop top crown adjustment fastener, dual rear polymer tension sliders, snap-fit temple arm clips.",
-    "description": "Evenly distributes the headset's 515g weight across the top of the skull and back of the head, ensuring a snug, non-slip fit during vigorous physical gameplay.",
-    "verified": true,
-    "assembled": [
-      0.0,
-      0.0,
-      0.0
-    ],
-    "exploded": [
-      0.0,
-      0.0,
-      -16.5
-    ],
-    "cameraTarget": [
-      0.0,
-      0.0,
-      -16.5
-    ],
-    "cameraDist": 20.0
-  },
-  {
     "id": "comfort_cushion_padding",
-    "name": "Padding & Removable Comfort Components",
+    "name": "Breathable Memory Foam Cushion & Light Blockers",
     "group": "group_comfort",
-    "groupName": "GROUP E \u2014 FIT AND COMFORT",
-    "category": "Ergonomics & Fit",
-    "specs": "Soft open-cell memory foam core encased in breathable athletic micro-mesh fabric, flexible silicone nose light-blocker flaps, hygienic washable design.",
-    "description": "Cushions contact pressure against the forehead and cheekbones while silicone nose flaps block 100% of external ambient light for deep virtual reality immersion.",
+    "groupName": "FIT & ERGONOMICS",
+    "category": "Comfort Gasket",
+    "specs": "Soft open-cell memory foam core encased in breathable athletic micro-mesh fabric, flexible silicone nose light-blocker flaps.",
+    "description": "Cushions contact pressure against the forehead and cheekbones while silicone nose flaps block external ambient light for deep virtual reality immersion.",
     "verified": true,
     "assembled": [
       0.0,
@@ -466,5 +440,31 @@
       -12.0
     ],
     "cameraDist": 14.0
+  },
+  {
+    "id": "comfort_head_strap",
+    "name": "Adjustable Woven Elastic Y-Strap",
+    "group": "group_comfort",
+    "groupName": "FIT & ERGONOMICS",
+    "category": "Headstrap Harness",
+    "specs": "Y-shaped flexible woven elastic strap, hook-and-loop top crown adjustment fastener, dual rear polymer tension sliders.",
+    "description": "Evenly distributes the headset's 515g weight across the top of the skull and back of the head, ensuring a snug, non-slip fit during vigorous gameplay.",
+    "verified": true,
+    "assembled": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "exploded": [
+      0.0,
+      0.0,
+      -16.5
+    ],
+    "cameraTarget": [
+      0.0,
+      0.0,
+      -16.5
+    ],
+    "cameraDist": 20.0
   }
 ]

@@ -12,7 +12,7 @@ import visionProData from './data/visionProData.json';
 import gsap from 'gsap';
 
 export default function App() {
-  const [headsetType, setHeadsetType] = useState('vision_pro'); // 'vision_pro' | 'quest3'
+  const [headsetType, setHeadsetType] = useState('quest3'); // 'quest3' | 'vision_pro'
   const [isLoading, setIsLoading] = useState(true);
   const [loadProgress, setLoadProgress] = useState(10);
   const [mode, setMode] = useState('studio'); // 'studio' | 'story'
@@ -132,7 +132,7 @@ export default function App() {
   };
 
   return (
-    <div className="relative w-full min-h-screen bg-[#060811] text-slate-100 overflow-x-hidden font-sans">
+    <div className="relative w-full min-h-screen bg-[#090a0f] text-zinc-100 overflow-x-hidden font-sans">
       {/* Loading Screen */}
       {isLoading && (
         <LoadingScreen progress={loadProgress} />

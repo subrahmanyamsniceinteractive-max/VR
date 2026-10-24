@@ -1,5 +1,5 @@
 import React from 'react';
-import { X, CheckCircle2, ChevronLeft, ChevronRight, Focus, ShieldCheck } from 'lucide-react';
+import { X, ChevronLeft, ChevronRight } from 'lucide-react';
 import componentsData from '../data/componentsData.json';
 
 export default function ComponentInspector({
@@ -25,98 +25,88 @@ export default function ComponentInspector({
   };
 
   return (
-    <div className="absolute top-20 right-6 z-30 w-full max-w-sm pointer-events-auto animate-in fade-in slide-in-from-right-4 duration-300">
-      <div className="glass-panel-glow rounded-2xl p-5 border border-sky-500/30 shadow-2xl relative overflow-hidden">
-        {/* Subtle decorative background scanner line */}
-        <div className="absolute top-0 left-0 right-0 h-0.5 bg-gradient-to-r from-transparent via-sky-400 to-transparent" />
-
-        {/* Header with Group Tag & Close */}
+    <div className="absolute top-20 right-6 z-30 w-full max-w-sm pointer-events-auto">
+      <div className="apple-glass rounded-2xl p-6 border border-white/10 shadow-2xl relative">
+        {/* Category Header & Close */}
         <div className="flex items-start justify-between gap-3 mb-3">
-          <div className="flex flex-col gap-1">
-            <div className="flex items-center gap-2">
-              <span className="tech-badge">{comp.groupName}</span>
-              {comp.verified && (
-                <span className="flex items-center gap-1 text-[10px] font-mono text-emerald-400 bg-emerald-950/60 border border-emerald-500/30 px-2 py-0.5 rounded">
-                  <ShieldCheck size={11} />
-                  VERIFIED
-                </span>
-              )}
-            </div>
-            <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider">
-              {comp.category} • PART {String(currentIndex + 1).padStart(2, '0')}/{dataList.length}
+          <div className="flex flex-col">
+            <span className="spec-tag text-zinc-400">
+              {comp.groupName.split('—')[1] || comp.groupName} • {String(currentIndex + 1).padStart(2, '0')}/{dataList.length}
+            </span>
+            <span className="text-xs text-zinc-400 font-medium tracking-tight mt-0.5">
+              {comp.category}
             </span>
           </div>
 
           <button
             onClick={onClose}
-            className="glass-btn w-7 h-7 rounded-full text-slate-400 hover:text-white"
+            className="apple-pill-btn w-6 h-6 rounded-full text-zinc-400 hover:text-white"
             title="Deselect Component"
           >
-            <X size={14} />
+            <X size={13} />
           </button>
         </div>
 
         {/* Title */}
-        <h3 className="text-lg font-bold text-white tracking-tight mb-2 font-display">
+        <h3 className="text-lg font-semibold text-white tracking-tight mb-2">
           {comp.name}
         </h3>
 
         {/* Description */}
-        <p className="text-xs text-slate-300 leading-relaxed mb-4">
+        <p className="text-xs text-zinc-300 leading-relaxed mb-4 font-normal">
           {comp.description}
         </p>
 
-        {/* Verified Specifications */}
-        <div className="bg-slate-950/60 rounded-xl p-3 border border-slate-800 mb-4">
-          <div className="text-[10px] font-mono text-sky-400 font-bold uppercase tracking-wider mb-1.5 flex items-center gap-1.5">
-            <CheckCircle2 size={12} />
-            Hardware Architecture & Specifications
+        {/* Engineering Architecture & Specifications */}
+        <div className="bg-zinc-950/70 rounded-xl p-3.5 border border-zinc-800/80 mb-4">
+          <div className="text-[10px] font-mono text-zinc-400 uppercase tracking-wider mb-1.5 font-semibold">
+            Engineering Specifications
           </div>
-          <p className="text-[11px] font-mono text-slate-300 leading-normal">
+          <p className="text-[11px] font-mono text-zinc-300 leading-relaxed">
             {comp.specs}
           </p>
         </div>
 
-        {/* Coordinates Telemetry */}
+        {/* Coordinate Offsets */}
         <div className="grid grid-cols-2 gap-2 mb-4 font-mono text-[10px]">
-          <div className="bg-slate-900/60 rounded p-2 border border-slate-800/80">
-            <span className="text-slate-500 block">ASSEMBLED COORD</span>
-            <span className="text-slate-300 font-bold">
-              X:{comp.assembled[0]} Y:{comp.assembled[1]} Z:{comp.assembled[2]}
+          <div className="bg-zinc-900/40 rounded p-2 border border-zinc-800">
+            <span className="text-zinc-500 block">ASSEMBLED [XYZ]</span>
+            <span className="text-zinc-300">
+              {comp.assembled[0]}, {comp.assembled[1]}, {comp.assembled[2]}
             </span>
           </div>
-          <div className="bg-slate-900/60 rounded p-2 border border-slate-800/80">
-            <span className="text-slate-500 block">EXPLODED COORD</span>
-            <span className="text-sky-400 font-bold">
-              X:{comp.exploded[0]} Y:{comp.exploded[1]} Z:{comp.exploded[2]}
+          <div className="bg-zinc-900/40 rounded p-2 border border-zinc-800">
+            <span className="text-zinc-500 block">EXPLODED [XYZ]</span>
+            <span className="text-zinc-100 font-medium">
+              {comp.exploded[0]}, {comp.exploded[1]}, {comp.exploded[2]}
             </span>
           </div>
         </div>
 
-        {/* Navigation & Actions */}
-        <div className="flex items-center justify-between gap-2 pt-2 border-t border-slate-800">
-          <div className="flex items-center gap-1">
+        {/* Controls */}
+        <div className="flex items-center justify-between gap-2 pt-3 border-t border-zinc-800/80">
+          <div className="flex items-center gap-1.5">
             <button
               onClick={handlePrev}
-              className="glass-btn w-8 h-8 rounded-lg text-slate-400 hover:text-white"
-              title="Previous Part"
+              className="apple-pill-btn w-7 h-7 rounded-lg text-zinc-400 hover:text-white"
+              title="Previous Component"
             >
-              <ChevronLeft size={16} />
+              <ChevronLeft size={14} />
             </button>
             <button
               onClick={handleNext}
-              className="glass-btn w-8 h-8 rounded-lg text-slate-400 hover:text-white"
-              title="Next Part"
+              className="apple-pill-btn w-7 h-7 rounded-lg text-zinc-400 hover:text-white"
+              title="Next Component"
             >
-              <ChevronRight size={16} />
+              <ChevronRight size={14} />
             </button>
           </div>
 
           <button
             onClick={onClose}
-            className="glass-btn px-3 h-8 rounded-lg text-xs font-mono text-slate-300 hover:text-white"
+            className="apple-pill-btn px-3 h-7 rounded-lg text-xs font-mono text-zinc-300 hover:text-white"
           >
-            Return to View
+            Return to Assembly
           </button>
         </div>
       </div>
