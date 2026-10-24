@@ -28,7 +28,8 @@ export default function HUDControls({
   onToggleLabels,
   onToggleDrawer,
   isDrawerOpen,
-  onResetCamera
+  onResetCamera,
+  componentsCount = 14
 }) {
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -163,10 +164,10 @@ export default function HUDControls({
           className={`glass-btn px-3 h-8 rounded-full text-xs font-mono gap-1.5 ${
             isDrawerOpen ? 'bg-sky-500 text-slate-950 font-semibold' : 'text-slate-300'
           }`}
-          title="Inspect All 18 Components"
+          title="Inspect All Hardware Components"
         >
           <Box size={13} />
-          <span>PARTS (18)</span>
+          <span>PARTS ({componentsCount})</span>
         </button>
 
         {/* Fullscreen */}

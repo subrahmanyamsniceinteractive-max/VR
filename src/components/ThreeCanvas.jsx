@@ -7,9 +7,11 @@ import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
 import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
 import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import gsap from 'gsap';
-import componentsData from '../data/componentsData.json';
+import quest3Data from '../data/componentsData.json';
+import visionProData from '../data/visionProData.json';
 
 export default function ThreeCanvas({
+  headsetType = 'vision_pro', // 'vision_pro' | 'quest3'
   explodeProgress = 0,
   explodeIntensity = 1.0,
   selectedComponentId = null,
@@ -36,7 +38,12 @@ export default function ThreeCanvas({
   const animFrameIdRef = useRef(null);
   const isInteractingRef = useRef(false);
 
-  // 1. Initialize Photorealistic Scene, Studio Environment & Post-Processing
+  const activeComponentsData = headsetType === 'vision_pro' ? visionProData : quest3Data;
+  const activeModelPath = headsetType === 'vision_pro' 
+    ? '/models/vision_pro_exploded.glb' 
+    : '/models/quest3_exploded.glb';
+
+  // 1. Initialize Scene & Load Model
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -55,12 +62,11 @@ export default function ThreeCanvas({
     camera.position.copy(defaultCameraPos.current);
     cameraRef.current = camera;
 
-    // Renderer
+    // WebGL Renderer
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
       powerPreference: 'high-performance',
       alpha: false,
-      stencil: false,
       depth: true
     });
     renderer.setSize(width, height);
@@ -73,11 +79,11 @@ export default function ThreeCanvas({
     container.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
-    // Post-Processing Pipeline (Bloom & Cinematic Tone Mapping)
+    // Post-Processing Pipeline (UnrealBloomPass for glowing EyeSight OLED & specular glints)
     const renderScene = new RenderPass(scene, camera);
     const bloomPass = new UnrealBloomPass(
       new THREE.Vector2(width, height),
-      0.32,  // subtle bloom strength
+      0.35,  // subtle bloom strength
       0.5,   // radius
       0.82   // threshold for specular glints
     );
@@ -103,7 +109,7 @@ export default function ThreeCanvas({
     controls.addEventListener('start', () => { isInteractingRef.current = true; });
     controls.addEventListener('end', () => { isInteractingRef.current = false; });
 
-    // Procedural Studio HDRI Environment Map (creates authentic specular highlights on plastic, metal & glass)
+    // Procedural Studio HDRI Environment Map (creates authentic specular reflections on glass & metal)
     const pmremGenerator = new THREE.PMREMGenerator(renderer);
     pmremGenerator.compileEquirectangularShader();
 
@@ -141,7 +147,6 @@ export default function ThreeCanvas({
     scene.environment = envTexture;
 
     // Physical Studio Lighting Rig
-    // 1. Key Keylight
     const keyLight = new THREE.DirectionalLight(0xf8fafc, 2.6);
     keyLight.position.set(14, 18, 16);
     keyLight.castShadow = true;
@@ -156,26 +161,22 @@ export default function ThreeCanvas({
     keyLight.shadow.camera.bottom = -16;
     scene.add(keyLight);
 
-    // 2. Razor-sharp Silhouette Rim Light
     const rimLight = new THREE.DirectionalLight(0x38bdf8, 2.4);
     rimLight.position.set(-16, 14, -18);
     scene.add(rimLight);
 
-    // 3. Fill Light (Soft Violet)
     const fillLight = new THREE.DirectionalLight(0x818cf8, 1.4);
     fillLight.position.set(-16, -8, 14);
     scene.add(fillLight);
 
-    // 4. Subtle Ambient Atmosphere
     const hemiLight = new THREE.HemisphereLight(0x1e293b, 0x05070f, 0.95);
     scene.add(hemiLight);
 
-    // 5. Internal Core Accent Light (illuminates internals when exploded)
     const coreLight = new THREE.PointLight(0x38bdf8, 2.2, 24);
     coreLight.position.set(0, 0, 0);
     scene.add(coreLight);
 
-    // High-Fidelity Studio Contact Ground Shadow Plane
+    // Contact Ground Shadow Plane
     const shadowCanvas = document.createElement('canvas');
     shadowCanvas.width = 512;
     shadowCanvas.height = 512;
@@ -201,9 +202,15 @@ export default function ThreeCanvas({
     shadowPlane.position.y = -9.2;
     scene.add(shadowPlane);
 
-    // High-Resolution Procedural PBR Textures
+    // Load Textures
     const textureLoader = new THREE.TextureLoader();
     const textures = {
+      // Vision Pro Textures
+      eyesight: textureLoader.load('/textures/vision_eyesight.png'),
+      visionSilicon: textureLoader.load('/textures/vision_silicon.png'),
+      soloKnit: textureLoader.load('/textures/vision_solo_knit.png'),
+      microOled: textureLoader.load('/textures/vision_micro_oled.png'),
+      // Quest 3 Textures
       pcb: textureLoader.load('/textures/motherboard_pcb.png'),
       chip: textureLoader.load('/textures/snapdragon_xr2.png'),
       battery: textureLoader.load('/textures/battery_label.png'),
@@ -217,25 +224,25 @@ export default function ThreeCanvas({
       t.anisotropy = Math.min(renderer.capabilities.getMaxAnisotropy(), 8);
     });
 
-    // GLTF Loading
+    // Load Active GLTF Model
     const loader = new GLTFLoader();
     onLoadProgress?.(15);
+    meshesMapRef.current.clear();
 
     loader.load(
-      '/models/quest3_exploded.glb',
+      activeModelPath,
       (gltf) => {
         onLoadProgress?.(85);
         const model = gltf.scene;
-        model.name = 'Quest3_Root';
+        model.name = 'Headset_Root';
         scene.add(model);
 
-        // Process all 18 components with advanced photorealistic materials
         model.traverse((child) => {
           if (child.isMesh) {
             child.castShadow = true;
             child.receiveShadow = true;
 
-            const compMeta = componentsData.find(c => c.id === child.name || c.id === child.parent?.name);
+            const compMeta = activeComponentsData.find(c => c.id === child.name || c.id === child.parent?.name);
             const compId = compMeta ? compMeta.id : child.name;
 
             child.userData.componentId = compId;
@@ -244,123 +251,182 @@ export default function ThreeCanvas({
             child.userData.assembledPos = compMeta ? new THREE.Vector3(...compMeta.assembled) : child.position.clone();
             child.userData.explodedPos = compMeta ? new THREE.Vector3(...compMeta.exploded) : child.position.clone();
 
-            // Photorealistic Material Assignments
-            if (compId === 'exterior_faceplate') {
-              child.material = new THREE.MeshPhysicalMaterial({
-                color: 0xffffff,
-                roughness: 0.24,
-                metalness: 0.02,
-                clearcoat: 0.45,
-                clearcoatRoughness: 0.15,
-                sheen: 0.35,
-                sheenRoughness: 0.2,
-                map: textures.faceplate,
-                envMapIntensity: 1.4
-              });
-            } else if (compId === 'exterior_housing') {
-              child.material = new THREE.MeshPhysicalMaterial({
-                color: 0xf8f9fa,
-                roughness: 0.30,
-                metalness: 0.03,
-                clearcoat: 0.30,
-                clearcoatRoughness: 0.2,
-                envMapIntensity: 1.2
-              });
-            } else if (compId === 'optics_lens_left' || compId === 'optics_lens_right') {
-              // Real Multi-Element Optical Glass with Folded Polarizing Transmission
-              child.material = new THREE.MeshPhysicalMaterial({
-                color: 0x050d1a,
-                roughness: 0.03,
-                metalness: 0.08,
-                transmission: 0.94,
-                ior: 1.55,
-                thickness: 1.6,
-                specularIntensity: 1.4,
-                specularColor: new THREE.Color(0x38bdf8), // cyan anti-reflective glint
-                transparent: true,
-                opacity: 0.92,
-                envMapIntensity: 2.2
-              });
-            } else if (compId === 'optics_displays') {
-              child.material = new THREE.MeshStandardMaterial({
-                color: 0x070b14,
-                map: textures.display,
-                emissive: new THREE.Color(0x00f0ff),
-                emissiveIntensity: 0.55,
-                roughness: 0.18,
-                metalness: 0.65,
-                envMapIntensity: 1.2
-              });
-            } else if (compId === 'exterior_sensors') {
-              child.material = new THREE.MeshStandardMaterial({
-                color: 0x111318,
-                roughness: 0.20,
-                metalness: 0.92,
-                envMapIntensity: 1.6
-              });
-            } else if (compId === 'electronics_motherboard') {
-              child.material = new THREE.MeshStandardMaterial({
-                color: 0x121c16,
-                map: textures.pcb,
-                roughness: 0.32,
-                metalness: 0.45,
-                envMapIntensity: 1.3
-              });
-            } else if (compId === 'electronics_snapdragon_xr2') {
-              child.material = new THREE.MeshStandardMaterial({
-                color: 0x181a20,
-                map: textures.chip,
-                roughness: 0.18,
-                metalness: 0.95,
-                envMapIntensity: 2.0
-              });
-            } else if (compId === 'power_battery') {
-              child.material = new THREE.MeshStandardMaterial({
-                color: 0xe2e8f0,
-                map: textures.battery,
-                roughness: 0.24,
-                metalness: 0.88,
-                envMapIntensity: 1.6
-              });
-            } else if (compId === 'electronics_cooling_fan_heatsink') {
-              child.material = new THREE.MeshStandardMaterial({
-                color: 0xdf7a40, // pure sintered copper tone
-                roughness: 0.20,
-                metalness: 0.98,
-                envMapIntensity: 2.2
-              });
-            } else if (compId === 'electronics_flex_cables') {
-              child.material = new THREE.MeshPhysicalMaterial({
-                color: 0xdf9a24, // Amber Kapton polyimide
-                roughness: 0.25,
-                metalness: 0.65,
-                transmission: 0.3,
-                transparent: true,
-                opacity: 0.94,
-                envMapIntensity: 1.5
-              });
-            } else if (compId === 'comfort_head_strap' || compId === 'comfort_cushion_padding') {
-              child.material = new THREE.MeshStandardMaterial({
-                color: 0x22252c,
-                map: textures.strap,
-                roughness: 0.92,
-                metalness: 0.02,
-                envMapIntensity: 0.6
-              });
-            } else if (compId === 'comfort_facial_interface') {
-              child.material = new THREE.MeshStandardMaterial({
-                color: 0x1a1d24,
-                roughness: 0.65,
-                metalness: 0.08,
-                envMapIntensity: 0.8
-              });
-            } else if (compId === 'optics_brackets') {
-              child.material = new THREE.MeshStandardMaterial({
-                color: 0x717985, // Magnesium-aluminum alloy
-                roughness: 0.25,
-                metalness: 0.90,
-                envMapIntensity: 1.8
-              });
+            // Material Configurations
+            if (headsetType === 'vision_pro') {
+              // --- Apple Vision Pro PBR Materials ---
+              if (compId === 'vision_glass_visor') {
+                // 3D-Formed Laminated Optical Glass Visor (matching uploaded photo)
+                child.material = new THREE.MeshPhysicalMaterial({
+                  color: 0x050814,
+                  roughness: 0.02,
+                  metalness: 0.05,
+                  transmission: 0.96,
+                  ior: 1.52,
+                  thickness: 1.8,
+                  specularIntensity: 1.5,
+                  specularColor: new THREE.Color(0xffffff),
+                  transparent: true,
+                  opacity: 0.94,
+                  envMapIntensity: 2.4
+                });
+              } else if (compId === 'vision_eyesight_oled') {
+                // Curved EyeSight Lenticular OLED (Radiant Purple/Blue Glow from Photo)
+                child.material = new THREE.MeshStandardMaterial({
+                  color: 0x120826,
+                  map: textures.eyesight,
+                  emissiveMap: textures.eyesight,
+                  emissive: new THREE.Color(0x9d4edd),
+                  emissiveIntensity: 0.95,
+                  roughness: 0.15,
+                  metalness: 0.35,
+                  envMapIntensity: 1.2
+                });
+              } else if (compId === 'vision_aluminum_frame') {
+                // Curved Aerospace Aluminum Alloy Chassis with Bead-blasted Finish
+                child.material = new THREE.MeshStandardMaterial({
+                  color: 0xe2e8f0,
+                  roughness: 0.28,
+                  metalness: 0.92,
+                  envMapIntensity: 2.0
+                });
+              } else if (compId === 'vision_apple_silicon') {
+                // Apple M2 + Apple R1 Dual Silicon Die
+                child.material = new THREE.MeshStandardMaterial({
+                  color: 0x161820,
+                  map: textures.visionSilicon,
+                  roughness: 0.18,
+                  metalness: 0.95,
+                  envMapIntensity: 2.2
+                });
+              } else if (compId === 'vision_micro_oled') {
+                // Dual 4K+ Micro-OLED Displays (23 Million Pixels)
+                child.material = new THREE.MeshStandardMaterial({
+                  color: 0x080c18,
+                  map: textures.microOled,
+                  emissive: new THREE.Color(0x00f0ff),
+                  emissiveIntensity: 0.6,
+                  roughness: 0.15,
+                  metalness: 0.75,
+                  envMapIntensity: 1.4
+                });
+              } else if (compId === 'vision_catadioptric_optics_left' || compId === 'vision_catadioptric_optics_right') {
+                // Custom 3-Element Catadioptric Optics with Zeiss Magnetic Rings
+                child.material = new THREE.MeshPhysicalMaterial({
+                  color: 0x050e1c,
+                  roughness: 0.03,
+                  metalness: 0.1,
+                  transmission: 0.95,
+                  ior: 1.54,
+                  thickness: 1.6,
+                  specularIntensity: 1.4,
+                  specularColor: new THREE.Color(0x38bdf8),
+                  transparent: true,
+                  opacity: 0.94,
+                  envMapIntensity: 2.2
+                });
+              } else if (compId === 'vision_solo_knit_band') {
+                // 3D-Knitted Ribbed Solo Knit Band
+                child.material = new THREE.MeshStandardMaterial({
+                  color: 0x484c56,
+                  map: textures.soloKnit,
+                  roughness: 0.88,
+                  metalness: 0.04,
+                  envMapIntensity: 0.8
+                });
+              } else if (compId === 'vision_audio_straps') {
+                // Audio Straps with Dual-Driver Spatial Audio Pods
+                child.material = new THREE.MeshPhysicalMaterial({
+                  color: 0xf8fafc,
+                  roughness: 0.28,
+                  metalness: 0.05,
+                  clearcoat: 0.25,
+                  envMapIntensity: 1.2
+                });
+              } else if (compId === 'vision_light_seal' || compId === 'vision_light_seal_cushion') {
+                // Magnetic Light Seal & Breathable Cushion
+                child.material = new THREE.MeshStandardMaterial({
+                  color: 0x242730,
+                  roughness: 0.85,
+                  metalness: 0.02,
+                  envMapIntensity: 0.6
+                });
+              } else if (compId === 'vision_thermal_cooling') {
+                // Dual Micro-Centrifugal Blowers & Vapor Chamber
+                child.material = new THREE.MeshStandardMaterial({
+                  color: 0xc8d0dc,
+                  roughness: 0.24,
+                  metalness: 0.94,
+                  envMapIntensity: 2.0
+                });
+              }
+            } else {
+              // --- Meta Quest 3 PBR Materials ---
+              if (compId === 'exterior_faceplate') {
+                child.material = new THREE.MeshPhysicalMaterial({
+                  color: 0xffffff,
+                  roughness: 0.24,
+                  metalness: 0.02,
+                  clearcoat: 0.45,
+                  clearcoatRoughness: 0.15,
+                  sheen: 0.35,
+                  sheenRoughness: 0.2,
+                  map: textures.faceplate,
+                  envMapIntensity: 1.4
+                });
+              } else if (compId === 'exterior_housing') {
+                child.material = new THREE.MeshPhysicalMaterial({
+                  color: 0xf8f9fa,
+                  roughness: 0.30,
+                  metalness: 0.03,
+                  clearcoat: 0.30,
+                  envMapIntensity: 1.2
+                });
+              } else if (compId === 'optics_lens_left' || compId === 'optics_lens_right') {
+                child.material = new THREE.MeshPhysicalMaterial({
+                  color: 0x050d1a,
+                  roughness: 0.03,
+                  metalness: 0.08,
+                  transmission: 0.94,
+                  ior: 1.55,
+                  thickness: 1.6,
+                  specularIntensity: 1.4,
+                  specularColor: new THREE.Color(0x38bdf8),
+                  transparent: true,
+                  opacity: 0.92,
+                  envMapIntensity: 2.2
+                });
+              } else if (compId === 'electronics_motherboard') {
+                child.material = new THREE.MeshStandardMaterial({
+                  color: 0x121c16,
+                  map: textures.pcb,
+                  roughness: 0.32,
+                  metalness: 0.45,
+                  envMapIntensity: 1.3
+                });
+              } else if (compId === 'electronics_snapdragon_xr2') {
+                child.material = new THREE.MeshStandardMaterial({
+                  color: 0x181a20,
+                  map: textures.chip,
+                  roughness: 0.18,
+                  metalness: 0.95,
+                  envMapIntensity: 2.0
+                });
+              } else if (compId === 'power_battery') {
+                child.material = new THREE.MeshStandardMaterial({
+                  color: 0xe2e8f0,
+                  map: textures.battery,
+                  roughness: 0.24,
+                  metalness: 0.88,
+                  envMapIntensity: 1.6
+                });
+              } else if (compId === 'electronics_cooling_fan_heatsink') {
+                child.material = new THREE.MeshStandardMaterial({
+                  color: 0xdf7a40,
+                  roughness: 0.20,
+                  metalness: 0.98,
+                  envMapIntensity: 2.2
+                });
+              }
             }
 
             child.userData.baseMaterial = child.material.clone();
@@ -378,7 +444,7 @@ export default function ThreeCanvas({
         }
       },
       (err) => {
-        console.error('Failed to load Quest 3 GLB model:', err);
+        console.error('Failed to load GLB model:', err);
         onLoadProgress?.(100);
         onLoaded?.();
       }
@@ -409,9 +475,9 @@ export default function ThreeCanvas({
 
       // Subtle organic floating oscillation when assembled
       if (sceneRef.current) {
-        const root = sceneRef.current.getObjectByName('Quest3_Root');
+        const root = sceneRef.current.getObjectByName('Headset_Root');
         if (root && !isInteractingRef.current) {
-          root.position.y = Math.sin(elapsedTime * 1.1) * 0.22;
+          root.position.y = Math.sin(elapsedTime * 1.1) * 0.20;
           root.rotation.y = Math.sin(elapsedTime * 0.35) * 0.04;
         }
       }
@@ -422,7 +488,7 @@ export default function ThreeCanvas({
         const w = container.clientWidth;
         const h = container.clientHeight;
 
-        componentsData.forEach((comp) => {
+        activeComponentsData.forEach((comp) => {
           const mesh = meshesMapRef.current.get(comp.id);
           if (mesh) {
             const worldPos = new THREE.Vector3();
@@ -448,7 +514,6 @@ export default function ThreeCanvas({
         setScreenLabels(labels);
       }
 
-      // Render through post-processing composer
       composer.render();
     };
     animate();
@@ -462,12 +527,12 @@ export default function ThreeCanvas({
       pmremGenerator.dispose();
       renderer.dispose();
     };
-  }, []);
+  }, [headsetType]);
 
   // 2. Handle Explode Progress & Intensity
   useEffect(() => {
     meshesMapRef.current.forEach((mesh, compId) => {
-      const compMeta = componentsData.find(c => c.id === compId);
+      const compMeta = activeComponentsData.find(c => c.id === compId);
       if (!compMeta) return;
 
       const assembled = new THREE.Vector3(...compMeta.assembled);
@@ -484,7 +549,7 @@ export default function ThreeCanvas({
         overwrite: 'auto'
       });
     });
-  }, [explodeProgress, explodeIntensity]);
+  }, [explodeProgress, explodeIntensity, activeComponentsData]);
 
   // 3. Handle Component Selection & Camera Framing
   useEffect(() => {
@@ -493,7 +558,7 @@ export default function ThreeCanvas({
     if (!controls || !camera) return;
 
     if (selectedComponentId) {
-      const compMeta = componentsData.find(c => c.id === selectedComponentId);
+      const compMeta = activeComponentsData.find(c => c.id === selectedComponentId);
       const targetMesh = meshesMapRef.current.get(selectedComponentId);
 
       if (compMeta && targetMesh) {
@@ -556,7 +621,7 @@ export default function ThreeCanvas({
         }
       });
     }
-  }, [selectedComponentId]);
+  }, [selectedComponentId, activeComponentsData]);
 
   // 4. Handle Camera Presets
   useEffect(() => {

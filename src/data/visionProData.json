@@ -1,0 +1,366 @@
+[
+  {
+    "id": "vision_glass_visor",
+    "name": "3D-Formed Laminated Optical Glass Visor",
+    "group": "group_exterior",
+    "groupName": "EXTERIOR & OPTICS",
+    "category": "Optical Enclosure",
+    "specs": "Single continuous piece of 3D-formed laminated glass, optical surface for 12 cameras and sensors, anti-reflective and oleophobic coatings.",
+    "description": "Flows seamlessly into the custom aluminum alloy frame. Acts as a protective optical surface for the cameras and displays the EyeSight lenticular OLED panel.",
+    "verified": true,
+    "assembled": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "exploded": [
+      0.0,
+      0.0,
+      14.5
+    ],
+    "cameraTarget": [
+      0.0,
+      0.0,
+      14.5
+    ],
+    "cameraDist": 16.0
+  },
+  {
+    "id": "vision_eyesight_oled",
+    "name": "Curved Lenticular EyeSight OLED Display",
+    "group": "group_exterior",
+    "groupName": "EXTERIOR & OPTICS",
+    "category": "Display Engineering",
+    "specs": "Curved lenticular OLED display, stereoscopic perspective projection, reveals eyes to external observers or indicates immersion mode.",
+    "description": "Projects a perspective-correct view of the user's eyes to nearby observers through lenticular optics, creating authentic eye contact in physical space.",
+    "verified": true,
+    "assembled": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "exploded": [
+      0.0,
+      0.0,
+      10.5
+    ],
+    "cameraTarget": [
+      0.0,
+      0.0,
+      10.5
+    ],
+    "cameraDist": 14.0
+  },
+  {
+    "id": "vision_sensors",
+    "name": "TrueDepth & Spatial Perception Array",
+    "group": "group_sensors",
+    "groupName": "SENSORS & TRACKING",
+    "category": "Spatial Perception",
+    "specs": "2x primary 4K stereoscopic cameras, LiDAR Scanner, 4x downward/peripheral tracking cameras, 2x TrueDepth IR illuminators, ambient light sensor.",
+    "description": "Enables sub-millimeter hand tracking, real-time 3D room meshing, and high-fidelity video passthrough with precise spatial depth perception.",
+    "verified": true,
+    "assembled": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "exploded": [
+      0.0,
+      0.0,
+      16.5
+    ],
+    "cameraTarget": [
+      0.0,
+      0.0,
+      16.5
+    ],
+    "cameraDist": 12.0
+  },
+  {
+    "id": "vision_aluminum_frame",
+    "name": "Curved Aluminum Alloy Chassis with Digital Crown",
+    "group": "group_exterior",
+    "groupName": "EXTERIOR & STRUCTURE",
+    "category": "Structural Architecture",
+    "specs": "Custom aerospace-grade bead-blasted aluminum alloy frame, titanium Digital Crown, top capture button, micro-machined thermal grilles.",
+    "description": "Gently curves to wrap around the user's face while structurally securing the display, optical, and computing modules in calibrated alignment.",
+    "verified": true,
+    "assembled": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "exploded": [
+      0.0,
+      0.0,
+      7.5
+    ],
+    "cameraTarget": [
+      0.0,
+      0.0,
+      7.5
+    ],
+    "cameraDist": 18.0
+  },
+  {
+    "id": "vision_thermal_cooling",
+    "name": "Active Dual Micro-Blowers & Heat Sink",
+    "group": "group_compute",
+    "groupName": "THERMAL ENGINEERING",
+    "category": "Thermal Architecture",
+    "specs": "Dual ultra-quiet centrifugal micro-blowers, copper vapor chamber, top and bottom micro-machined air channels.",
+    "description": "Silently draws air from bottom vents and moves it across the M2 and R1 thermal dissipation plates, exhausting quietly through top vents.",
+    "verified": true,
+    "assembled": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "exploded": [
+      0.0,
+      7.5,
+      2.0
+    ],
+    "cameraTarget": [
+      0.0,
+      7.5,
+      2.0
+    ],
+    "cameraDist": 12.0
+  },
+  {
+    "id": "vision_apple_silicon",
+    "name": "Apple Silicon: Dual-Chip Architecture (M2 + R1)",
+    "group": "group_compute",
+    "groupName": "SILICON ARCHITECTURE",
+    "category": "Compute Architecture",
+    "specs": "Apple M2 (8-core CPU, 10-core GPU, 16-core NPU) + Apple R1 (12ms photon-to-motion latency, 256GB/s memory bandwidth, 5nm TSMC).",
+    "description": "M2 runs visionOS and 3D graphics while R1 processes feeds from 12 cameras, 5 sensors, and 6 microphones in real time, virtually eliminating lag.",
+    "verified": true,
+    "assembled": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "exploded": [
+      0.0,
+      10.5,
+      3.5
+    ],
+    "cameraTarget": [
+      0.0,
+      10.5,
+      3.5
+    ],
+    "cameraDist": 8.0
+  },
+  {
+    "id": "vision_logic_board",
+    "name": "Main Logic Board (Contoured HDI PCB)",
+    "group": "group_compute",
+    "groupName": "COMPUTE ARCHITECTURE",
+    "category": "Electronics",
+    "specs": "Curved high-density interconnect (HDI) logic board, silver EMI shielding cans, high-speed unified memory bus, flash storage.",
+    "description": "Houses the processing silicon, power distribution regulators, and high-speed bus interfaces connecting the Micro-OLEDs and sensor arrays.",
+    "verified": true,
+    "assembled": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "exploded": [
+      0.0,
+      5.0,
+      3.0
+    ],
+    "cameraTarget": [
+      0.0,
+      5.0,
+      3.0
+    ],
+    "cameraDist": 14.0
+  },
+  {
+    "id": "vision_micro_oled",
+    "name": "Dual 4K+ Micro-OLED Displays (23M Pixels)",
+    "group": "group_optics",
+    "groupName": "OPTICS & DISPLAY",
+    "category": "Display Technology",
+    "specs": "Dual custom micro-OLED displays, 23 million pixels total, 64x pixel density of iPhone, 92% DCI-P3 wide color gamut, HDR support.",
+    "description": "Each display is the size of a postage stamp yet packs more pixels than a 4K TV for each eye, delivering breathtaking visual sharpness and vibrant color.",
+    "verified": true,
+    "assembled": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "exploded": [
+      0.0,
+      -1.8,
+      -2.5
+    ],
+    "cameraTarget": [
+      0.0,
+      -1.8,
+      -2.5
+    ],
+    "cameraDist": 12.0
+  },
+  {
+    "id": "vision_catadioptric_optics_left",
+    "name": "Left 3-Element Catadioptric Optical Lens",
+    "group": "group_optics",
+    "groupName": "OPTICS & DISPLAY",
+    "category": "Optical Engineering",
+    "specs": "Custom 3-element catadioptric optical system, Zeiss magnetic prescription insert attachment, motorized automatic IPD adjustment.",
+    "description": "Bends light to produce incredible sharpness and clarity across the entire field of view while keeping the optical module ultra-compact.",
+    "verified": true,
+    "assembled": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "exploded": [
+      -5.8,
+      0.0,
+      2.5
+    ],
+    "cameraTarget": [
+      -5.8,
+      0.0,
+      2.5
+    ],
+    "cameraDist": 10.0
+  },
+  {
+    "id": "vision_catadioptric_optics_right",
+    "name": "Right 3-Element Catadioptric Optical Lens",
+    "group": "group_optics",
+    "groupName": "OPTICS & DISPLAY",
+    "category": "Optical Engineering",
+    "specs": "Custom 3-element catadioptric optical system, Zeiss magnetic prescription insert attachment, motorized automatic IPD adjustment.",
+    "description": "Delivers matched stereoscopic fidelity for the right eye with motorized IPD adjustments matching your exact pupil distance automatically.",
+    "verified": true,
+    "assembled": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "exploded": [
+      5.8,
+      0.0,
+      2.5
+    ],
+    "cameraTarget": [
+      5.8,
+      0.0,
+      2.5
+    ],
+    "cameraDist": 10.0
+  },
+  {
+    "id": "vision_audio_straps",
+    "name": "Audio Straps with Spatial Audio Pods",
+    "group": "group_exterior",
+    "groupName": "AUDIO & ERGONOMICS",
+    "category": "Acoustic Engineering",
+    "specs": "Dual-driver audio pods positioned right next to ears, Personalized Spatial Audio, audio ray tracing, magnetic braided power connector puck.",
+    "description": "Directs sound directly into the ears while keeping the user aware of surroundings. Matches sound to room acoustics using audio ray tracing.",
+    "verified": true,
+    "assembled": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "exploded": [
+      0.0,
+      0.0,
+      -2.0
+    ],
+    "cameraTarget": [
+      9.0,
+      0.0,
+      -4.0
+    ],
+    "cameraDist": 16.0
+  },
+  {
+    "id": "vision_light_seal",
+    "name": "Magnetic Light Seal Frame",
+    "group": "group_comfort",
+    "groupName": "FIT & ERGONOMICS",
+    "category": "Ergonomics",
+    "specs": "Magnetically attached light seal frame, soft textile construction, contours to various facial structures to eliminate stray light.",
+    "description": "Attaches magnetically to the aluminum alloy frame, flexing gently to conform to the user's face and blocking stray ambient light.",
+    "verified": true,
+    "assembled": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "exploded": [
+      0.0,
+      0.0,
+      -8.0
+    ],
+    "cameraTarget": [
+      0.0,
+      0.0,
+      -8.0
+    ],
+    "cameraDist": 16.0
+  },
+  {
+    "id": "vision_light_seal_cushion",
+    "name": "Breathable Light Seal Face Cushion",
+    "group": "group_comfort",
+    "groupName": "FIT & ERGONOMICS",
+    "category": "Comfort",
+    "specs": "Breathable soft fabric cushion, attaches via micro-velcro to Light Seal, cushions face contact with even weight distribution.",
+    "description": "Provides breathable cushioning against facial cheekbones and forehead, ensuring all-day spatial computing comfort.",
+    "verified": true,
+    "assembled": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "exploded": [
+      0.0,
+      0.0,
+      -12.0
+    ],
+    "cameraTarget": [
+      0.0,
+      0.0,
+      -12.0
+    ],
+    "cameraDist": 14.0
+  },
+  {
+    "id": "vision_solo_knit_band",
+    "name": "3D-Knitted Ribbed Solo Knit Band with Fit Dial",
+    "group": "group_comfort",
+    "groupName": "FIT & ERGONOMICS",
+    "category": "Textile Engineering",
+    "specs": "Single continuous 3D-knitted ribbed piece, micro-adjustable rotary Fit Dial, secure click-in release mechanism.",
+    "description": "Woven as a single continuous piece with engineered ribbing for breathability, stretch, and cushioning. The Fit Dial allows micro-tuning tension with precision.",
+    "verified": true,
+    "assembled": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "exploded": [
+      0.0,
+      0.0,
+      -16.5
+    ],
+    "cameraTarget": [
+      0.0,
+      0.0,
+      -16.5
+    ],
+    "cameraDist": 20.0
+  }
+]

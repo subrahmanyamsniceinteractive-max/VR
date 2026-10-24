@@ -7,9 +7,12 @@ import ScrollStory from './components/ScrollStory';
 import HeaderNav from './components/HeaderNav';
 import LoadingScreen from './components/LoadingScreen';
 import ModelReplacementGuide from './components/ModelReplacementGuide';
+import quest3Data from './data/componentsData.json';
+import visionProData from './data/visionProData.json';
 import gsap from 'gsap';
 
 export default function App() {
+  const [headsetType, setHeadsetType] = useState('vision_pro'); // 'vision_pro' | 'quest3'
   const [isLoading, setIsLoading] = useState(true);
   const [loadProgress, setLoadProgress] = useState(10);
   const [mode, setMode] = useState('studio'); // 'studio' | 'story'
@@ -24,6 +27,20 @@ export default function App() {
   const [isGuideOpen, setIsGuideOpen] = useState(false);
 
   const tweenRef = useRef(null);
+
+  const activeData = headsetType === 'vision_pro' ? visionProData : quest3Data;
+  const currentTitle = headsetType === 'vision_pro' ? 'Apple Vision Pro' : 'Meta Quest 3';
+
+  // Headset Switcher
+  const handleSelectHeadset = (type) => {
+    if (type === headsetType) return;
+    setIsLoading(true);
+    setLoadProgress(10);
+    setHeadsetType(type);
+    setSelectedComponentId(null);
+    setExplodeProgress(0.0);
+    setCameraPreset('front');
+  };
 
   // Smooth Explode / Assemble Transitions
   const handleToggleExplode = () => {
@@ -59,14 +76,12 @@ export default function App() {
     if (tweenRef.current) tweenRef.current.kill();
 
     const proxy = { val: explodeProgress };
-    // Play to full explode
     tweenRef.current = gsap.to(proxy, {
       val: 1.0,
       duration: 3.5,
       ease: 'power1.inOut',
       onUpdate: () => setExplodeProgress(proxy.val),
       onComplete: () => {
-        // Hold at exploded view briefly, then reverse assemble
         tweenRef.current = gsap.to(proxy, {
           val: 0.0,
           duration: 3.5,
@@ -92,7 +107,6 @@ export default function App() {
   const handleSelectComponent = (id) => {
     setSelectedComponentId(id);
     if (id && explodeProgress < 0.4) {
-      // Auto-separate slightly so internal component is accessible
       if (tweenRef.current) tweenRef.current.kill();
       const proxy = { val: explodeProgress };
       tweenRef.current = gsap.to(proxy, {
@@ -118,27 +132,30 @@ export default function App() {
   };
 
   return (
-    <div className="relative w-full min-h-screen bg-[#070913] text-slate-100 overflow-x-hidden font-sans">
+    <div className="relative w-full min-h-screen bg-[#060811] text-slate-100 overflow-x-hidden font-sans">
       {/* Loading Screen */}
       {isLoading && (
         <LoadingScreen progress={loadProgress} />
       )}
 
-      {/* Header Navigation */}
+      {/* Header Navigation with Headset Switcher */}
       <HeaderNav
+        headsetType={headsetType}
+        onSelectHeadset={handleSelectHeadset}
         mode={mode}
         onSwitchMode={handleSwitchMode}
         onOpenDrawer={() => setIsDrawerOpen(true)}
         onOpenGuide={() => setIsGuideOpen(true)}
       />
 
-      {/* 3D Scene Container (Sticky background in story mode, full viewport in studio mode) */}
+      {/* 3D Scene Viewport */}
       <div className={`${
         mode === 'story'
           ? 'fixed inset-0 z-0'
           : 'relative w-full h-screen z-10'
       }`}>
         <ThreeCanvas
+          headsetType={headsetType}
           explodeProgress={explodeProgress}
           explodeIntensity={explodeIntensity}
           selectedComponentId={selectedComponentId}
@@ -170,6 +187,7 @@ export default function App() {
           onToggleDrawer={() => setIsDrawerOpen(!isDrawerOpen)}
           isDrawerOpen={isDrawerOpen}
           onResetCamera={handleResetCamera}
+          componentsCount={activeData.length}
         />
       )}
 
@@ -189,9 +207,10 @@ export default function App() {
         selectedId={selectedComponentId}
         onClose={() => setSelectedComponentId(null)}
         onSelectComponent={handleSelectComponent}
+        components={activeData}
       />
 
-      {/* 18-Component Drawer Directory */}
+      {/* Hardware Subassemblies Drawer */}
       <ComponentDrawer
         isOpen={isDrawerOpen}
         onClose={() => setIsDrawerOpen(false)}
@@ -200,9 +219,11 @@ export default function App() {
           handleSelectComponent(id);
           setIsDrawerOpen(false);
         }}
+        components={activeData}
+        title={`${currentTitle} Assembly`}
       />
 
-      {/* 3D Model Replacement Guide */}
+      {/* 3D Model Replacement & Architecture Guide */}
       <ModelReplacementGuide
         isOpen={isGuideOpen}
         onClose={() => setIsGuideOpen(false)}

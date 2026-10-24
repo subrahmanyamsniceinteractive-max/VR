@@ -5,21 +5,23 @@ import componentsData from '../data/componentsData.json';
 export default function ComponentInspector({
   selectedId,
   onClose,
-  onSelectComponent
+  onSelectComponent,
+  components = []
 }) {
   if (!selectedId) return null;
 
-  const currentIndex = componentsData.findIndex(c => c.id === selectedId);
-  const comp = componentsData[currentIndex] || componentsData[0];
+  const dataList = components.length > 0 ? components : componentsData;
+  const currentIndex = dataList.findIndex(c => c.id === selectedId);
+  const comp = dataList[currentIndex] || dataList[0];
 
   const handlePrev = () => {
-    const prevIdx = (currentIndex - 1 + componentsData.length) % componentsData.length;
-    onSelectComponent(componentsData[prevIdx].id);
+    const prevIdx = (currentIndex - 1 + dataList.length) % dataList.length;
+    onSelectComponent(dataList[prevIdx].id);
   };
 
   const handleNext = () => {
-    const nextIdx = (currentIndex + 1) % componentsData.length;
-    onSelectComponent(componentsData[nextIdx].id);
+    const nextIdx = (currentIndex + 1) % dataList.length;
+    onSelectComponent(dataList[nextIdx].id);
   };
 
   return (
@@ -41,7 +43,7 @@ export default function ComponentInspector({
               )}
             </div>
             <span className="text-[11px] font-mono text-slate-400 uppercase tracking-wider">
-              {comp.category} • PART {String(currentIndex + 1).padStart(2, '0')}/18
+              {comp.category} • PART {String(currentIndex + 1).padStart(2, '0')}/{dataList.length}
             </span>
           </div>
 

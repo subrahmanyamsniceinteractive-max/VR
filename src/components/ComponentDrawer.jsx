@@ -6,23 +6,22 @@ export default function ComponentDrawer({
   isOpen,
   onClose,
   selectedId,
-  onSelectComponent
+  onSelectComponent,
+  components = [],
+  title = "Hardware Assembly"
 }) {
   const [search, setSearch] = useState('');
   const [activeGroup, setActiveGroup] = useState('ALL');
 
   if (!isOpen) return null;
 
+  const dataList = components.length > 0 ? components : componentsData;
+
   const groups = [
-    { id: 'ALL', label: 'All Parts', count: 18 },
-    { id: 'group_exterior', label: 'Exterior', count: 4, icon: Box },
-    { id: 'group_optics', label: 'Optics', count: 4, icon: Eye },
-    { id: 'group_electronics', label: 'Compute', count: 5, icon: Cpu },
-    { id: 'group_power', label: 'Power', count: 2, icon: Battery },
-    { id: 'group_comfort', label: 'Fit & Comfort', count: 3, icon: Shield }
+    { id: 'ALL', label: 'All Parts', count: dataList.length }
   ];
 
-  const filteredComponents = componentsData.filter(comp => {
+  const filteredComponents = dataList.filter(comp => {
     const matchesGroup = activeGroup === 'ALL' || comp.group === activeGroup;
     const matchesSearch = comp.name.toLowerCase().includes(search.toLowerCase()) ||
                           comp.specs.toLowerCase().includes(search.toLowerCase()) ||
@@ -39,8 +38,8 @@ export default function ComponentDrawer({
             <Layers size={18} />
           </div>
           <div>
-            <h2 className="font-display font-bold text-white text-base">Meta Quest 3 Assembly</h2>
-            <p className="text-[11px] font-mono text-slate-400">18 VERIFIED HARDWARE SUBASSEMBLIES</p>
+            <h2 className="font-display font-bold text-white text-base">{title}</h2>
+            <p className="text-[11px] font-mono text-slate-400">{dataList.length} VERIFIED HARDWARE SUBASSEMBLIES</p>
           </div>
         </div>
 
