@@ -2,6 +2,10 @@ import React, { useEffect, useRef, useState } from 'react';
 import * as THREE from 'three';
 import { OrbitControls } from 'three/examples/jsm/controls/OrbitControls.js';
 import { GLTFLoader } from 'three/examples/jsm/loaders/GLTFLoader.js';
+import { EffectComposer } from 'three/examples/jsm/postprocessing/EffectComposer.js';
+import { RenderPass } from 'three/examples/jsm/postprocessing/RenderPass.js';
+import { UnrealBloomPass } from 'three/examples/jsm/postprocessing/UnrealBloomPass.js';
+import { OutputPass } from 'three/examples/jsm/postprocessing/OutputPass.js';
 import gsap from 'gsap';
 import componentsData from '../data/componentsData.json';
 
@@ -21,17 +25,18 @@ export default function ThreeCanvas({
   const sceneRef = useRef(null);
   const cameraRef = useRef(null);
   const rendererRef = useRef(null);
+  const composerRef = useRef(null);
   const controlsRef = useRef(null);
   const meshesMapRef = useRef(new Map());
   const raycasterRef = useRef(new THREE.Raycaster());
   const mouseRef = useRef(new THREE.Vector2());
-  const defaultCameraPos = useRef(new THREE.Vector3(0, 2.5, 24));
+  const defaultCameraPos = useRef(new THREE.Vector3(0, 1.8, 22));
   const defaultTarget = useRef(new THREE.Vector3(0, 0, 0));
   const [screenLabels, setScreenLabels] = useState([]);
   const animFrameIdRef = useRef(null);
   const isInteractingRef = useRef(false);
 
-  // 1. Initialize Scene & Renderer
+  // 1. Initialize Photorealistic Scene, Studio Environment & Post-Processing
   useEffect(() => {
     const container = containerRef.current;
     if (!container) return;
@@ -41,12 +46,12 @@ export default function ThreeCanvas({
 
     // Scene
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x070913);
-    scene.fog = new THREE.FogExp2(0x070913, 0.018);
+    scene.background = new THREE.Color(0x060811);
+    scene.fog = new THREE.FogExp2(0x060811, 0.016);
     sceneRef.current = scene;
 
     // Camera
-    const camera = new THREE.PerspectiveCamera(42, width / height, 0.1, 100);
+    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
     camera.position.copy(defaultCameraPos.current);
     cameraRef.current = camera;
 
@@ -54,24 +59,42 @@ export default function ThreeCanvas({
     const renderer = new THREE.WebGLRenderer({
       antialias: true,
       powerPreference: 'high-performance',
-      alpha: false
+      alpha: false,
+      stencil: false,
+      depth: true
     });
     renderer.setSize(width, height);
     renderer.setPixelRatio(Math.min(window.devicePixelRatio, 2));
     renderer.toneMapping = THREE.ACESFilmicToneMapping;
-    renderer.toneMappingExposure = 1.25;
+    renderer.toneMappingExposure = 1.35;
     renderer.outputColorSpace = THREE.SRGBColorSpace;
     renderer.shadowMap.enabled = true;
     renderer.shadowMap.type = THREE.PCFSoftShadowMap;
     container.appendChild(renderer.domElement);
     rendererRef.current = renderer;
 
+    // Post-Processing Pipeline (Bloom & Cinematic Tone Mapping)
+    const renderScene = new RenderPass(scene, camera);
+    const bloomPass = new UnrealBloomPass(
+      new THREE.Vector2(width, height),
+      0.32,  // subtle bloom strength
+      0.5,   // radius
+      0.82   // threshold for specular glints
+    );
+    const outputPass = new OutputPass();
+
+    const composer = new EffectComposer(renderer);
+    composer.addPass(renderScene);
+    composer.addPass(bloomPass);
+    composer.addPass(outputPass);
+    composerRef.current = composer;
+
     // Controls
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
-    controls.minDistance = 7;
-    controls.maxDistance = 45;
+    controls.minDistance = 6;
+    controls.maxDistance = 42;
     controls.maxPolarAngle = Math.PI * 0.92;
     controls.minPolarAngle = 0.08;
     controls.target.copy(defaultTarget.current);
@@ -80,56 +103,94 @@ export default function ThreeCanvas({
     controls.addEventListener('start', () => { isInteractingRef.current = true; });
     controls.addEventListener('end', () => { isInteractingRef.current = false; });
 
-    // Studio Lighting
-    // 1. Key directional light
-    const keyLight = new THREE.DirectionalLight(0xf1f5f9, 2.4);
-    keyLight.position.set(12, 18, 14);
+    // Procedural Studio HDRI Environment Map (creates authentic specular highlights on plastic, metal & glass)
+    const pmremGenerator = new THREE.PMREMGenerator(renderer);
+    pmremGenerator.compileEquirectangularShader();
+
+    const envScene = new THREE.Scene();
+    envScene.background = new THREE.Color(0x060914);
+
+    // Studio Softbox 1: Main Upper Softbox
+    const sb1 = new THREE.Mesh(
+      new THREE.PlaneGeometry(24, 20),
+      new THREE.MeshBasicMaterial({ color: 0xffffff })
+    );
+    sb1.position.set(14, 20, 16);
+    sb1.lookAt(0, 0, 0);
+    envScene.add(sb1);
+
+    // Studio Softbox 2: Cool Cyan Lateral Strip Light
+    const sb2 = new THREE.Mesh(
+      new THREE.PlaneGeometry(10, 28),
+      new THREE.MeshBasicMaterial({ color: 0x38bdf8 })
+    );
+    sb2.position.set(-20, 8, -14);
+    sb2.lookAt(0, 0, 0);
+    envScene.add(sb2);
+
+    // Studio Softbox 3: Deep Violet Accent Strip
+    const sb3 = new THREE.Mesh(
+      new THREE.PlaneGeometry(8, 22),
+      new THREE.MeshBasicMaterial({ color: 0x818cf8 })
+    );
+    sb3.position.set(-16, -6, 14);
+    sb3.lookAt(0, 0, 0);
+    envScene.add(sb3);
+
+    const envTexture = pmremGenerator.fromScene(envScene, 0.04).texture;
+    scene.environment = envTexture;
+
+    // Physical Studio Lighting Rig
+    // 1. Key Keylight
+    const keyLight = new THREE.DirectionalLight(0xf8fafc, 2.6);
+    keyLight.position.set(14, 18, 16);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.width = 2048;
     keyLight.shadow.mapSize.height = 2048;
     keyLight.shadow.camera.near = 0.5;
-    keyLight.shadow.camera.far = 50;
-    keyLight.shadow.bias = -0.0005;
-    keyLight.shadow.camera.left = -15;
-    keyLight.shadow.camera.right = 15;
-    keyLight.shadow.camera.top = 15;
-    keyLight.shadow.camera.bottom = -15;
+    keyLight.shadow.camera.far = 60;
+    keyLight.shadow.bias = -0.0003;
+    keyLight.shadow.camera.left = -16;
+    keyLight.shadow.camera.right = 16;
+    keyLight.shadow.camera.top = 16;
+    keyLight.shadow.camera.bottom = -16;
     scene.add(keyLight);
 
-    // 2. Rim/Back light for edge silhouette
-    const rimLight = new THREE.DirectionalLight(0x38bdf8, 2.2);
-    rimLight.position.set(-14, 12, -16);
+    // 2. Razor-sharp Silhouette Rim Light
+    const rimLight = new THREE.DirectionalLight(0x38bdf8, 2.4);
+    rimLight.position.set(-16, 14, -18);
     scene.add(rimLight);
 
-    // 3. Fill light (violet tint for futuristic studio feel)
+    // 3. Fill Light (Soft Violet)
     const fillLight = new THREE.DirectionalLight(0x818cf8, 1.4);
-    fillLight.position.set(-15, -6, 12);
+    fillLight.position.set(-16, -8, 14);
     scene.add(fillLight);
 
-    // 4. Soft ambient light
-    const hemiLight = new THREE.HemisphereLight(0x1e293b, 0x020617, 0.9);
+    // 4. Subtle Ambient Atmosphere
+    const hemiLight = new THREE.HemisphereLight(0x1e293b, 0x05070f, 0.95);
     scene.add(hemiLight);
 
-    // 5. Internal exploded core light
-    const coreLight = new THREE.PointLight(0x38bdf8, 1.8, 22);
+    // 5. Internal Core Accent Light (illuminates internals when exploded)
+    const coreLight = new THREE.PointLight(0x38bdf8, 2.2, 24);
     coreLight.position.set(0, 0, 0);
     scene.add(coreLight);
 
-    // Subtle floor shadow plane
+    // High-Fidelity Studio Contact Ground Shadow Plane
     const shadowCanvas = document.createElement('canvas');
-    shadowCanvas.width = 256;
-    shadowCanvas.height = 256;
+    shadowCanvas.width = 512;
+    shadowCanvas.height = 512;
     const ctx = shadowCanvas.getContext('2d');
-    const grad = ctx.createRadialGradient(128, 128, 0, 128, 128, 128);
-    grad.addColorStop(0, 'rgba(0, 12, 30, 0.7)');
-    grad.addColorStop(0.5, 'rgba(0, 12, 30, 0.3)');
+    const grad = ctx.createRadialGradient(256, 256, 0, 256, 256, 256);
+    grad.addColorStop(0, 'rgba(0, 8, 24, 0.85)');
+    grad.addColorStop(0.35, 'rgba(0, 8, 24, 0.45)');
+    grad.addColorStop(0.7, 'rgba(0, 8, 24, 0.12)');
     grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
     ctx.fillStyle = grad;
-    ctx.fillRect(0, 0, 256, 256);
+    ctx.fillRect(0, 0, 512, 512);
 
     const shadowTex = new THREE.CanvasTexture(shadowCanvas);
     const shadowPlane = new THREE.Mesh(
-      new THREE.PlaneGeometry(32, 32),
+      new THREE.PlaneGeometry(36, 36),
       new THREE.MeshBasicMaterial({
         map: shadowTex,
         transparent: true,
@@ -140,7 +201,7 @@ export default function ThreeCanvas({
     shadowPlane.position.y = -9.2;
     scene.add(shadowPlane);
 
-    // Load Procedural Textures
+    // High-Resolution Procedural PBR Textures
     const textureLoader = new THREE.TextureLoader();
     const textures = {
       pcb: textureLoader.load('/textures/motherboard_pcb.png'),
@@ -153,6 +214,7 @@ export default function ThreeCanvas({
     };
     Object.values(textures).forEach(t => {
       t.colorSpace = THREE.SRGBColorSpace;
+      t.anisotropy = Math.min(renderer.capabilities.getMaxAnisotropy(), 8);
     });
 
     // GLTF Loading
@@ -167,7 +229,7 @@ export default function ThreeCanvas({
         model.name = 'Quest3_Root';
         scene.add(model);
 
-        // Process all 18 components
+        // Process all 18 components with advanced photorealistic materials
         model.traverse((child) => {
           if (child.isMesh) {
             child.castShadow = true;
@@ -182,84 +244,122 @@ export default function ThreeCanvas({
             child.userData.assembledPos = compMeta ? new THREE.Vector3(...compMeta.assembled) : child.position.clone();
             child.userData.explodedPos = compMeta ? new THREE.Vector3(...compMeta.exploded) : child.position.clone();
 
-            // Material upgrades for realistic PBR
+            // Photorealistic Material Assignments
             if (compId === 'exterior_faceplate') {
-              child.material = new THREE.MeshStandardMaterial({
-                color: 0xf8fafc,
-                roughness: 0.32,
+              child.material = new THREE.MeshPhysicalMaterial({
+                color: 0xffffff,
+                roughness: 0.24,
                 metalness: 0.02,
+                clearcoat: 0.45,
+                clearcoatRoughness: 0.15,
+                sheen: 0.35,
+                sheenRoughness: 0.2,
                 map: textures.faceplate,
-                envMapIntensity: 1.2
+                envMapIntensity: 1.4
               });
             } else if (compId === 'exterior_housing') {
-              child.material = new THREE.MeshStandardMaterial({
-                color: 0xf1f5f9,
-                roughness: 0.38,
-                metalness: 0.04
+              child.material = new THREE.MeshPhysicalMaterial({
+                color: 0xf8f9fa,
+                roughness: 0.30,
+                metalness: 0.03,
+                clearcoat: 0.30,
+                clearcoatRoughness: 0.2,
+                envMapIntensity: 1.2
               });
             } else if (compId === 'optics_lens_left' || compId === 'optics_lens_right') {
+              // Real Multi-Element Optical Glass with Folded Polarizing Transmission
               child.material = new THREE.MeshPhysicalMaterial({
-                color: 0x0f172a,
-                roughness: 0.05,
-                metalness: 0.1,
-                transmission: 0.88,
-                ior: 1.54,
-                thickness: 1.2,
-                specularIntensity: 1.0,
-                specularColor: new THREE.Color(0x38bdf8),
+                color: 0x050d1a,
+                roughness: 0.03,
+                metalness: 0.08,
+                transmission: 0.94,
+                ior: 1.55,
+                thickness: 1.6,
+                specularIntensity: 1.4,
+                specularColor: new THREE.Color(0x38bdf8), // cyan anti-reflective glint
                 transparent: true,
-                opacity: 0.92
+                opacity: 0.92,
+                envMapIntensity: 2.2
               });
             } else if (compId === 'optics_displays') {
               child.material = new THREE.MeshStandardMaterial({
-                color: 0x090d16,
+                color: 0x070b14,
                 map: textures.display,
                 emissive: new THREE.Color(0x00f0ff),
-                emissiveIntensity: 0.45,
-                roughness: 0.2,
-                metalness: 0.5
+                emissiveIntensity: 0.55,
+                roughness: 0.18,
+                metalness: 0.65,
+                envMapIntensity: 1.2
+              });
+            } else if (compId === 'exterior_sensors') {
+              child.material = new THREE.MeshStandardMaterial({
+                color: 0x111318,
+                roughness: 0.20,
+                metalness: 0.92,
+                envMapIntensity: 1.6
               });
             } else if (compId === 'electronics_motherboard') {
               child.material = new THREE.MeshStandardMaterial({
-                color: 0x142018,
+                color: 0x121c16,
                 map: textures.pcb,
-                roughness: 0.35,
-                metalness: 0.45
+                roughness: 0.32,
+                metalness: 0.45,
+                envMapIntensity: 1.3
               });
             } else if (compId === 'electronics_snapdragon_xr2') {
               child.material = new THREE.MeshStandardMaterial({
                 color: 0x181a20,
                 map: textures.chip,
-                roughness: 0.22,
-                metalness: 0.85
+                roughness: 0.18,
+                metalness: 0.95,
+                envMapIntensity: 2.0
               });
             } else if (compId === 'power_battery') {
               child.material = new THREE.MeshStandardMaterial({
-                color: 0xd8dee9,
+                color: 0xe2e8f0,
                 map: textures.battery,
-                roughness: 0.28,
-                metalness: 0.82
+                roughness: 0.24,
+                metalness: 0.88,
+                envMapIntensity: 1.6
               });
             } else if (compId === 'electronics_cooling_fan_heatsink') {
               child.material = new THREE.MeshStandardMaterial({
-                color: 0xcd7f32, // copper tone
-                roughness: 0.25,
-                metalness: 0.95
+                color: 0xdf7a40, // pure sintered copper tone
+                roughness: 0.20,
+                metalness: 0.98,
+                envMapIntensity: 2.2
               });
             } else if (compId === 'electronics_flex_cables') {
-              child.material = new THREE.MeshStandardMaterial({
-                color: 0xdf9a24, // Amber Kapton
-                roughness: 0.3,
-                metalness: 0.5,
+              child.material = new THREE.MeshPhysicalMaterial({
+                color: 0xdf9a24, // Amber Kapton polyimide
+                roughness: 0.25,
+                metalness: 0.65,
+                transmission: 0.3,
                 transparent: true,
-                opacity: 0.92
+                opacity: 0.94,
+                envMapIntensity: 1.5
               });
             } else if (compId === 'comfort_head_strap' || compId === 'comfort_cushion_padding') {
               child.material = new THREE.MeshStandardMaterial({
-                color: 0x222630,
+                color: 0x22252c,
                 map: textures.strap,
-                roughness: 0.9,
-                metalness: 0.02
+                roughness: 0.92,
+                metalness: 0.02,
+                envMapIntensity: 0.6
+              });
+            } else if (compId === 'comfort_facial_interface') {
+              child.material = new THREE.MeshStandardMaterial({
+                color: 0x1a1d24,
+                roughness: 0.65,
+                metalness: 0.08,
+                envMapIntensity: 0.8
+              });
+            } else if (compId === 'optics_brackets') {
+              child.material = new THREE.MeshStandardMaterial({
+                color: 0x717985, // Magnesium-aluminum alloy
+                roughness: 0.25,
+                metalness: 0.90,
+                envMapIntensity: 1.8
               });
             }
 
@@ -286,16 +386,17 @@ export default function ThreeCanvas({
 
     // Resize Handler
     const handleResize = () => {
-      if (!container || !renderer || !camera) return;
+      if (!container || !renderer || !camera || !composer) return;
       const w = container.clientWidth;
       const h = container.clientHeight;
       camera.aspect = w / h;
       camera.updateProjectionMatrix();
       renderer.setSize(w, h);
+      composer.setSize(w, h);
     };
     window.addEventListener('resize', handleResize);
 
-    // Animation Loop
+    // Render & Animation Loop
     let clock = new THREE.Clock();
 
     const animate = () => {
@@ -304,16 +405,14 @@ export default function ThreeCanvas({
       const delta = clock.getDelta();
       const elapsedTime = clock.getElapsedTime();
 
-      // Controls damping update
       controls.update();
 
-      // Gentle floating oscillation when assembled
+      // Subtle organic floating oscillation when assembled
       if (sceneRef.current) {
         const root = sceneRef.current.getObjectByName('Quest3_Root');
         if (root && !isInteractingRef.current) {
-          // Slow floating idle
-          root.position.y = Math.sin(elapsedTime * 1.2) * 0.25;
-          root.rotation.y = Math.sin(elapsedTime * 0.4) * 0.05;
+          root.position.y = Math.sin(elapsedTime * 1.1) * 0.22;
+          root.rotation.y = Math.sin(elapsedTime * 0.35) * 0.04;
         }
       }
 
@@ -329,7 +428,6 @@ export default function ThreeCanvas({
             const worldPos = new THREE.Vector3();
             mesh.getWorldPosition(worldPos);
             
-            // Project 3D to 2D screen coordinates
             const screenPos = worldPos.clone().project(camera);
             const isVisible = screenPos.z < 1.0 && screenPos.x >= -1.0 && screenPos.x <= 1.0 && screenPos.y >= -1.0 && screenPos.y <= 1.0;
 
@@ -350,7 +448,8 @@ export default function ThreeCanvas({
         setScreenLabels(labels);
       }
 
-      renderer.render(scene, camera);
+      // Render through post-processing composer
+      composer.render();
     };
     animate();
 
@@ -360,6 +459,7 @@ export default function ThreeCanvas({
       if (renderer.domElement && container.contains(renderer.domElement)) {
         container.removeChild(renderer.domElement);
       }
+      pmremGenerator.dispose();
       renderer.dispose();
     };
   }, []);
@@ -373,14 +473,13 @@ export default function ThreeCanvas({
       const assembled = new THREE.Vector3(...compMeta.assembled);
       const exploded = new THREE.Vector3(...compMeta.exploded).multiplyScalar(explodeIntensity);
 
-      // Smooth interpolation
       const targetPos = new THREE.Vector3().lerpVectors(assembled, exploded, explodeProgress);
 
       gsap.to(mesh.position, {
         x: targetPos.x,
         y: targetPos.y,
         z: targetPos.z,
-        duration: 0.6,
+        duration: 0.65,
         ease: 'power2.out',
         overwrite: 'auto'
       });
@@ -401,15 +500,13 @@ export default function ThreeCanvas({
         const targetWorldPos = new THREE.Vector3();
         targetMesh.getWorldPosition(targetWorldPos);
 
-        // Calculate offset camera position
         const dist = compMeta.cameraDist || 14;
         const camOffset = new THREE.Vector3(
-          targetWorldPos.x + 3.0,
-          targetWorldPos.y + 2.0,
+          targetWorldPos.x + 2.5,
+          targetWorldPos.y + 1.8,
           targetWorldPos.z + dist
         );
 
-        // Smooth camera tween
         gsap.to(controls.target, {
           x: targetWorldPos.x,
           y: targetWorldPos.y,
@@ -426,29 +523,27 @@ export default function ThreeCanvas({
           ease: 'power3.inOut'
         });
 
-        // Highlight selected mesh & dim others
+        // Highlight selected mesh with subtle cyan edge glow & dim others
         meshesMapRef.current.forEach((mesh, id) => {
           if (id === selectedComponentId) {
             if (mesh.material.emissive) {
               gsap.to(mesh.material.emissive, {
-                r: 0.1,
+                r: 0.08,
                 g: 0.35,
-                b: 0.6,
+                b: 0.65,
                 duration: 0.3
               });
-              mesh.material.emissiveIntensity = 0.8;
+              mesh.material.emissiveIntensity = 0.85;
             }
           } else {
-            // Dim other parts
             if (mesh.material.opacity !== undefined) {
               mesh.material.transparent = true;
-              gsap.to(mesh.material, { opacity: 0.35, duration: 0.3 });
+              gsap.to(mesh.material, { opacity: 0.32, duration: 0.3 });
             }
           }
         });
       }
     } else {
-      // Restore all meshes to normal
       meshesMapRef.current.forEach((mesh) => {
         if (mesh.userData.baseMaterial) {
           if (mesh.material.emissive) {
@@ -586,7 +681,7 @@ export default function ThreeCanvas({
       {showLabels && explodeProgress > 0.25 && (
         <div className="absolute inset-0 pointer-events-none overflow-hidden z-10">
           {screenLabels
-            .filter((_, idx) => idx % 2 === 0 || selectedComponentId) // limit label density for elegance
+            .filter((_, idx) => idx % 2 === 0 || selectedComponentId)
             .map((lbl) => {
               const isSelected = lbl.id === selectedComponentId;
               const isHovered = lbl.id === hoveredComponentId;
@@ -612,15 +707,14 @@ export default function ThreeCanvas({
                     onSelectComponent?.(lbl.id);
                   }}
                 >
-                  <div className={`px-2.5 py-1 rounded text-xs flex items-center gap-1.5 shadow-lg border backdrop-blur-md ${
+                  <div className={`px-2.5 py-1 rounded-lg text-xs flex items-center gap-1.5 shadow-xl border backdrop-blur-md ${
                     isSelected 
-                      ? 'bg-sky-500/30 border-sky-400 text-white shadow-sky-500/20' 
-                      : 'bg-slate-900/80 border-slate-700/80 text-slate-300 hover:border-sky-400/60'
+                      ? 'bg-sky-500/30 border-sky-400 text-white shadow-sky-500/25 ring-2 ring-sky-400/40' 
+                      : 'bg-slate-900/85 border-slate-700/80 text-slate-300 hover:border-sky-400/70 hover:text-white'
                   }`}>
                     <span className={`w-1.5 h-1.5 rounded-full ${isSelected ? 'bg-sky-400 animate-ping' : 'bg-sky-500'}`} />
                     <span className="font-mono font-medium tracking-tight text-[11px] whitespace-nowrap">{lbl.name}</span>
                   </div>
-                  {/* Subtle connector stem */}
                   <div className="w-px h-3 bg-gradient-to-b from-sky-400/80 to-transparent mx-auto" />
                 </div>
               );
