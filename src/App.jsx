@@ -146,7 +146,7 @@ export default function App() {
   };
 
   return (
-    <div className="relative w-full min-h-screen bg-[#071426] text-[#F4F8FF] overflow-x-hidden font-sans">
+    <div className="relative w-full min-h-screen bg-[#08172B] text-[#F4F7FC] overflow-x-hidden font-sans">
       {/* Loading Screen */}
       {isLoading && (
         <LoadingScreen progress={loadProgress} />

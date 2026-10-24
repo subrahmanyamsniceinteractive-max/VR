@@ -19,12 +19,12 @@ export default function HeaderNav({
       <div className="flex items-center gap-4 pointer-events-auto">
         <div className="flex flex-col">
           <div className="flex items-center gap-2">
-            <h1 className="font-semibold text-[#F4F8FF] text-base tracking-tight">
+            <h1 className="font-semibold text-[#F4F7FC] text-base tracking-tight">
               {headsetType === 'quest3' ? 'Meta Quest 3' : 'Apple Vision Pro'}
             </h1>
-            <span className="w-1.5 h-1.5 rounded-full bg-[#2589FF] shadow-[0_0_8px_#2589FF]" />
+            <span className="w-1.5 h-1.5 rounded-full bg-[#398BFF] shadow-[0_0_8px_#398BFF]" />
           </div>
-          <span className="font-mono text-[10px] text-[#A9BCD5] tracking-wider uppercase">
+          <span className="font-mono text-[10px] text-[#B5C5DA] tracking-wider uppercase">
             Product Engineering Visualization
           </span>
         </div>
@@ -35,8 +35,8 @@ export default function HeaderNav({
             onClick={() => onSelectHeadset('quest3')}
             className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
               headsetType === 'quest3'
-                ? 'bg-[#2589FF] text-[#F4F8FF] shadow-[0_0_12px_rgba(37,137,255,0.45)]'
-                : 'text-[#A9BCD5] hover:text-[#F4F8FF]'
+                ? 'bg-[#398BFF] text-[#F4F7FC] shadow-[0_0_12px_rgba(57,139,255,0.45)]'
+                : 'text-[#B5C5DA] hover:text-[#F4F7FC]'
             }`}
           >
             Quest 3
@@ -45,8 +45,8 @@ export default function HeaderNav({
             onClick={() => onSelectHeadset('vision_pro')}
             className={`px-3 py-1 rounded-full text-xs font-medium transition-all ${
               headsetType === 'vision_pro'
-                ? 'bg-[#2589FF] text-[#F4F8FF] shadow-[0_0_12px_rgba(37,137,255,0.45)]'
-                : 'text-[#A9BCD5] hover:text-[#F4F8FF]'
+                ? 'bg-[#398BFF] text-[#F4F7FC] shadow-[0_0_12px_rgba(57,139,255,0.45)]'
+                : 'text-[#B5C5DA] hover:text-[#F4F7FC]'
             }`}
           >
             Vision Pro
@@ -56,11 +56,11 @@ export default function HeaderNav({
         {/* Real-time Verified Model Badge */}
         <button
           onClick={onOpenGuide}
-          className="hidden lg:flex items-center gap-1.5 navy-glass px-2.5 py-1 rounded-full text-[11px] font-mono text-[#F4F8FF] hover:border-[#2589FF] transition-all cursor-pointer"
+          className="hidden lg:flex items-center gap-1.5 navy-glass px-2.5 py-1 rounded-full text-[11px] font-mono text-[#F4F7FC] hover:border-[#398BFF] transition-all cursor-pointer"
           title="Inspect 3D Model Hierarchy & Polygon Counts"
         >
-          <ShieldCheck size={12} className="text-[#2589FF]" />
-          <span className="text-[#A9BCD5]">{meshCount} Parts • <strong className="text-[#F4F8FF]">{facesCount} Polys</strong></span>
+          <ShieldCheck size={12} className="text-[#398BFF]" />
+          <span className="text-[#B5C5DA]">{meshCount} Parts • <strong className="text-[#F4F7FC]">{facesCount} Polys</strong></span>
         </button>
       </div>
 
@@ -72,8 +72,8 @@ export default function HeaderNav({
             onClick={() => onSwitchMode('studio')}
             className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all flex items-center gap-1.5 ${
               mode === 'studio'
-                ? 'bg-[#2589FF] text-[#F4F8FF] shadow-[0_0_12px_rgba(37,137,255,0.45)]'
-                : 'text-[#A9BCD5] hover:text-[#F4F8FF]'
+                ? 'bg-[#398BFF] text-[#F4F7FC] shadow-[0_0_12px_rgba(57,139,255,0.45)]'
+                : 'text-[#B5C5DA] hover:text-[#F4F7FC]'
             }`}
           >
             <Compass size={13} />
@@ -84,8 +84,8 @@ export default function HeaderNav({
             onClick={() => onSwitchMode('story')}
             className={`px-3.5 py-1.5 rounded-full text-xs font-medium transition-all flex items-center gap-1.5 ${
               mode === 'story'
-                ? 'bg-[#2589FF] text-[#F4F8FF] shadow-[0_0_12px_rgba(37,137,255,0.45)]'
-                : 'text-[#A9BCD5] hover:text-[#F4F8FF]'
+                ? 'bg-[#398BFF] text-[#F4F7FC] shadow-[0_0_12px_rgba(57,139,255,0.45)]'
+                : 'text-[#B5C5DA] hover:text-[#F4F7FC]'
             }`}
           >
             <Sparkles size={13} />
@@ -99,7 +99,7 @@ export default function HeaderNav({
           className="navy-pill-btn px-3 h-8 rounded-full text-xs gap-1.5"
           title="3D Model Engineering Inspection & Specs"
         >
-          <CheckCircle2 size={13} className="text-[#2589FF]" />
+          <CheckCircle2 size={13} className="text-[#398BFF]" />
           <span className="hidden md:inline">Asset Audit</span>
         </button>
 

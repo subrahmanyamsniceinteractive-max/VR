@@ -3,24 +3,24 @@
 @layer base {
   :root {
     /* Premium Blue Technology Theme Palette */
-    --bg-hero: #071426;
-    --bg-dark-secondary: #102A4C;
-    --accent-blue: #2589FF;
-    --blue-glow: #174A83;
-    --bg-light-tech: #EAF3FF;
-    --text-dark-primary: #F4F8FF;
-    --text-dark-secondary: #A9BCD5;
-    --text-light-primary: #10233B;
-    --border-dark: rgba(37, 137, 255, 0.16);
-    --border-light: rgba(16, 42, 76, 0.18);
+    --bg-main: #08172B;
+    --bg-secondary: #102744;
+    --accent-blue: #398BFF;
+    --gradient-glow: #173B65;
+    --bg-light-tech: #EAF2FC;
+    --text-primary: #F4F7FC;
+    --text-secondary: #B5C5DA;
+    --text-light-tech: #08172B;
+    --border-dark: rgba(57, 139, 255, 0.18);
+    --border-light: rgba(16, 39, 68, 0.20);
   }
 
   html, body {
     width: 100%;
     height: 100%;
     overflow-x: hidden;
-    background-color: var(--bg-hero);
-    color: var(--text-dark-primary);
+    background-color: var(--bg-main);
+    color: var(--text-primary);
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif;
     letter-spacing: -0.015em;
     user-select: none;
@@ -33,39 +33,39 @@
   height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #071426;
+  background: #08172B;
 }
 ::-webkit-scrollbar-thumb {
-  background: #174A83;
+  background: #173B65;
   border-radius: 3px;
-  border: 1px solid rgba(37, 137, 255, 0.2);
+  border: 1px solid rgba(57, 139, 255, 0.22);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #2589FF;
+  background: #398BFF;
 }
 
 /* Premium Deep Navy Glass Surface */
 .navy-glass {
-  background: rgba(16, 42, 76, 0.82);
+  background: rgba(16, 39, 68, 0.82);
   backdrop-filter: blur(28px);
   -webkit-backdrop-filter: blur(28px);
-  border: 1px solid rgba(37, 137, 255, 0.20);
-  box-shadow: 0 16px 40px rgba(7, 20, 38, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.08);
+  border: 1px solid rgba(57, 139, 255, 0.20);
+  box-shadow: 0 16px 40px rgba(8, 23, 43, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-/* Ice-White Technical Section Surface */
+/* Clean Ice-White Technical Section Surface */
 .light-tech-card {
-  background: #EAF3FF;
-  color: #10233B;
-  border: 1px solid rgba(37, 137, 255, 0.30);
-  box-shadow: 0 20px 48px rgba(7, 20, 38, 0.55);
+  background: #EAF2FC;
+  color: #08172B;
+  border: 1px solid rgba(57, 139, 255, 0.32);
+  box-shadow: 0 20px 48px rgba(8, 23, 43, 0.55);
 }
 
 /* Interactive Pill Buttons */
 .navy-pill-btn {
-  background: rgba(23, 74, 131, 0.38);
-  border: 1px solid rgba(37, 137, 255, 0.28);
-  color: #F4F8FF;
+  background: rgba(23, 59, 101, 0.38);
+  border: 1px solid rgba(57, 139, 255, 0.26);
+  color: #F4F7FC;
   font-size: 0.78rem;
   letter-spacing: 0.02em;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -75,29 +75,29 @@
   cursor: pointer;
 }
 .navy-pill-btn:hover {
-  background: rgba(37, 137, 255, 0.22);
-  border-color: #2589FF;
+  background: rgba(57, 139, 255, 0.22);
+  border-color: #398BFF;
   color: #FFFFFF;
-  box-shadow: 0 0 16px rgba(37, 137, 255, 0.28);
+  box-shadow: 0 0 16px rgba(57, 139, 255, 0.30);
 }
 .navy-pill-btn:active {
   transform: scale(0.98);
 }
 .navy-pill-btn.active {
-  background: #2589FF;
-  color: #F4F8FF;
-  border-color: #2589FF;
+  background: #398BFF;
+  color: #F4F7FC;
+  border-color: #398BFF;
   font-weight: 600;
-  box-shadow: 0 0 20px rgba(37, 137, 255, 0.40);
+  box-shadow: 0 0 20px rgba(57, 139, 255, 0.42);
 }
 
-/* Electric Blue Action Button */
+/* Accent Blue Action Button */
 .blue-action-btn {
-  background: #2589FF;
-  color: #F4F8FF;
+  background: #398BFF;
+  color: #F4F7FC;
   border: 1px solid rgba(255, 255, 255, 0.25);
   font-weight: 600;
-  box-shadow: 0 4px 18px rgba(37, 137, 255, 0.42);
+  box-shadow: 0 4px 18px rgba(57, 139, 255, 0.42);
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
   display: inline-flex;
   align-items: center;
@@ -105,8 +105,8 @@
   cursor: pointer;
 }
 .blue-action-btn:hover {
-  background: #3c98ff;
-  box-shadow: 0 6px 24px rgba(37, 137, 255, 0.55);
+  background: #4fa0ff;
+  box-shadow: 0 6px 24px rgba(57, 139, 255, 0.55);
   transform: translateY(-1px);
 }
 .blue-action-btn:active {
@@ -119,7 +119,7 @@
   font-size: 0.65rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #A9BCD5;
+  color: #B5C5DA;
 }
 
 .spec-tag-blue {
@@ -127,5 +127,5 @@
   font-size: 0.65rem;
   letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #2589FF;
+  color: #398BFF;
 }

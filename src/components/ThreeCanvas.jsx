@@ -35,7 +35,7 @@ export default function ThreeCanvas({
   const meshesMapRef = useRef(new Map());
   const raycasterRef = useRef(new THREE.Raycaster());
   const mouseRef = useRef(new THREE.Vector2());
-  const defaultCameraPos = useRef(new THREE.Vector3(0, 1.8, 22));
+  const defaultCameraPos = useRef(new THREE.Vector3(0, 1.2, 29.5));
   const defaultTarget = useRef(new THREE.Vector3(0, 0, 0));
   const [screenLabels, setScreenLabels] = useState([]);
   const animFrameIdRef = useRef(null);
@@ -54,14 +54,28 @@ export default function ThreeCanvas({
     const width = container.clientWidth;
     const height = container.clientHeight;
 
-    // Scene with premium deep navy technology background (#071426)
+    // Scene with subtle radial blue studio backdrop (#08172B to #173B65)
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x071426);
-    scene.fog = new THREE.FogExp2(0x071426, 0.015);
+    
+    // High-resolution procedural radial gradient backdrop
+    const bgCanvas = document.createElement('canvas');
+    bgCanvas.width = 1024;
+    bgCanvas.height = 1024;
+    const bgCtx = bgCanvas.getContext('2d');
+    const radialGrad = bgCtx.createRadialGradient(512, 512, 30, 512, 512, 620);
+    radialGrad.addColorStop(0, '#173B65');
+    radialGrad.addColorStop(0.48, '#102744');
+    radialGrad.addColorStop(1, '#08172B');
+    bgCtx.fillStyle = radialGrad;
+    bgCtx.fillRect(0, 0, 1024, 1024);
+    const bgTexture = new THREE.CanvasTexture(bgCanvas);
+    bgTexture.colorSpace = THREE.SRGBColorSpace;
+    scene.background = bgTexture;
+    scene.fog = new THREE.FogExp2(0x08172B, 0.012);
     sceneRef.current = scene;
 
-    // Camera
-    const camera = new THREE.PerspectiveCamera(40, width / height, 0.1, 100);
+    // Medium-wide product camera view (distortion-free 36° FOV at ~29.5 units distance)
+    const camera = new THREE.PerspectiveCamera(36, width / height, 0.1, 120);
     camera.position.copy(defaultCameraPos.current);
     cameraRef.current = camera;
 
@@ -98,12 +112,12 @@ export default function ThreeCanvas({
     composer.addPass(outputPass);
     composerRef.current = composer;
 
-    // OrbitControls
+    // OrbitControls with comfortable distance bounds (prevent extreme close-ups)
     const controls = new OrbitControls(camera, renderer.domElement);
     controls.enableDamping = true;
     controls.dampingFactor = 0.05;
-    controls.minDistance = 6;
-    controls.maxDistance = 40;
+    controls.minDistance = 14;
+    controls.maxDistance = 45;
     controls.maxPolarAngle = Math.PI * 0.90;
     controls.minPolarAngle = 0.10;
     controls.target.copy(defaultTarget.current);
@@ -117,7 +131,7 @@ export default function ThreeCanvas({
     pmremGenerator.compileEquirectangularShader();
 
     const envScene = new THREE.Scene();
-    envScene.background = new THREE.Color(0x071426);
+    envScene.background = new THREE.Color(0x08172b);
 
     // Studio Softbox 1: Overhead Neutral White Key Softbox (preserves accurate headset materials)
     const sb1 = new THREE.Mesh(
@@ -128,19 +142,19 @@ export default function ThreeCanvas({
     sb1.lookAt(0, 0, 0);
     envScene.add(sb1);
 
-    // Studio Softbox 2: Rear Electric Blue Rim Softbox (creates subtle #2589FF edge highlights)
+    // Studio Softbox 2: Rear Accent Blue Rim Softbox (#398BFF edge highlights)
     const sb2 = new THREE.Mesh(
       new THREE.PlaneGeometry(12, 30),
-      new THREE.MeshBasicMaterial({ color: 0x2589ff })
+      new THREE.MeshBasicMaterial({ color: 0x398bff })
     );
     sb2.position.set(-22, 12, -14);
     sb2.lookAt(0, 0, 0);
     envScene.add(sb2);
 
-    // Studio Softbox 3: Deep Navy Secondary Fill (#102A4C)
+    // Studio Softbox 3: Deep Navy Secondary Fill (#102744)
     const sb3 = new THREE.Mesh(
       new THREE.PlaneGeometry(12, 24),
-      new THREE.MeshBasicMaterial({ color: 0x102a4c })
+      new THREE.MeshBasicMaterial({ color: 0x102744 })
     );
     sb3.position.set(-16, -8, 16);
     sb3.lookAt(0, 0, 0);
@@ -149,8 +163,8 @@ export default function ThreeCanvas({
     const envTexture = pmremGenerator.fromScene(envScene, 0.04).texture;
     scene.environment = envTexture;
 
-    // Physical Studio Lighting Rig (Neutral Key + Restrained Electric Blue Rim)
-    const keyLight = new THREE.DirectionalLight(0xffffff, 2.5);
+    // Physical Studio Lighting Rig (Neutral Key + Restrained Accent Blue Rim)
+    const keyLight = new THREE.DirectionalLight(0xffffff, 2.45);
     keyLight.position.set(14, 18, 16);
     keyLight.castShadow = true;
     keyLight.shadow.mapSize.width = 2048;
@@ -164,18 +178,18 @@ export default function ThreeCanvas({
     keyLight.shadow.camera.bottom = -16;
     scene.add(keyLight);
 
-    // Restrained Electric Blue Rim Lighting (#2589FF) on product silhouette
-    const rimLight = new THREE.DirectionalLight(0x2589ff, 1.85);
+    // Restrained Accent Blue Rim Lighting (#398BFF) on product silhouette
+    const rimLight = new THREE.DirectionalLight(0x398bff, 1.75);
     rimLight.position.set(-18, 14, -18);
     scene.add(rimLight);
 
-    // Soft daylight fill (#EAF3FF)
-    const fillLight = new THREE.DirectionalLight(0xeaf3ff, 1.15);
+    // Soft daylight fill (#EAF2FC)
+    const fillLight = new THREE.DirectionalLight(0xeaf2fc, 1.15);
     fillLight.position.set(-16, -8, 14);
     scene.add(fillLight);
 
-    // Subtle blue glow ambient (#174A83 sky, #071426 deep navy ground)
-    const hemiLight = new THREE.HemisphereLight(0x174a83, 0x071426, 0.85);
+    // Subtle blue glow ambient (#173B65 sky, #08172B deep navy ground)
+    const hemiLight = new THREE.HemisphereLight(0x173b65, 0x08172b, 0.85);
     scene.add(hemiLight);
 
     // Deep Navy Contact Ground Shadow Plane
@@ -184,10 +198,10 @@ export default function ThreeCanvas({
     shadowCanvas.height = 512;
     const ctx = shadowCanvas.getContext('2d');
     const grad = ctx.createRadialGradient(256, 256, 0, 256, 256, 256);
-    grad.addColorStop(0, 'rgba(4, 12, 24, 0.90)');
-    grad.addColorStop(0.35, 'rgba(7, 20, 38, 0.52)');
-    grad.addColorStop(0.7, 'rgba(16, 42, 76, 0.16)');
-    grad.addColorStop(1, 'rgba(7, 20, 38, 0)');
+    grad.addColorStop(0, 'rgba(5, 15, 28, 0.90)');
+    grad.addColorStop(0.35, 'rgba(8, 23, 43, 0.52)');
+    grad.addColorStop(0.7, 'rgba(16, 39, 68, 0.16)');
+    grad.addColorStop(1, 'rgba(8, 23, 43, 0)');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, 512, 512);
 
@@ -530,9 +544,9 @@ export default function ThreeCanvas({
       if (sceneRef.current) {
         const root = sceneRef.current.getObjectByName('Headset_Root');
         if (root && !isInteractingRef.current) {
-          // Slow continuous rotation
-          root.rotation.y = elapsedTime * 0.12;
-          root.position.y = Math.sin(elapsedTime * 0.8) * 0.15;
+          // Subtle, slow, smooth product rotation (controlled and non-distracting)
+          root.rotation.y = elapsedTime * 0.06;
+          root.position.y = Math.sin(elapsedTime * 0.5) * 0.05;
         }
       }
 
@@ -684,40 +698,40 @@ export default function ThreeCanvas({
         const targetWorldPos = new THREE.Vector3();
         targetMesh.getWorldPosition(targetWorldPos);
 
-        const dist = compMeta.cameraDist || 14;
+        // Comfortable medium-wide product camera view (prevents aggressive close-ups)
         const camOffset = new THREE.Vector3(
-          targetWorldPos.x + 2.5,
-          targetWorldPos.y + 1.8,
-          targetWorldPos.z + dist
+          targetWorldPos.x * 0.35 + 1.5,
+          targetWorldPos.y * 0.35 + 1.2,
+          28.0
         );
 
         gsap.to(controls.target, {
-          x: targetWorldPos.x,
-          y: targetWorldPos.y,
-          z: targetWorldPos.z,
-          duration: 1.2,
-          ease: 'power3.inOut'
+          x: targetWorldPos.x * 0.3,
+          y: targetWorldPos.y * 0.3,
+          z: 0,
+          duration: 1.3,
+          ease: 'power2.inOut'
         });
 
         gsap.to(camera.position, {
           x: camOffset.x,
           y: camOffset.y,
           z: camOffset.z,
-          duration: 1.2,
-          ease: 'power3.inOut'
+          duration: 1.3,
+          ease: 'power2.inOut'
         });
 
-        // Highlight selected mesh with subtle blue glow (#174A83)
+        // Highlight selected mesh with subtle blue glow (#173B65 / #398BFF)
         meshesMapRef.current.forEach((mesh, id) => {
           if (id === selectedComponentId) {
             if (mesh.material.emissive) {
               gsap.to(mesh.material.emissive, {
                 r: 0.09,
-                g: 0.29,
-                b: 0.55,
+                g: 0.23,
+                b: 0.45,
                 duration: 0.3
               });
-              mesh.material.emissiveIntensity = 0.65;
+              mesh.material.emissiveIntensity = 0.60;
             }
           } else {
             if (mesh.material.opacity !== undefined) {
@@ -728,6 +742,22 @@ export default function ThreeCanvas({
         });
       }
     } else {
+      // Smoothly restore comfortable default camera framing when deselected
+      gsap.to(controls.target, {
+        x: defaultTarget.current.x,
+        y: defaultTarget.current.y,
+        z: defaultTarget.current.z,
+        duration: 1.3,
+        ease: 'power2.inOut'
+      });
+      gsap.to(camera.position, {
+        x: defaultCameraPos.current.x,
+        y: defaultCameraPos.current.y,
+        z: defaultCameraPos.current.z,
+        duration: 1.3,
+        ease: 'power2.inOut'
+      });
+
       meshesMapRef.current.forEach((mesh) => {
         if (mesh.userData.baseMaterial) {
           if (mesh.material.emissive) {
@@ -787,28 +817,30 @@ export default function ThreeCanvas({
 
     switch (cameraPreset) {
       case 'front':
-        targetCam = new THREE.Vector3(0, 0, 22);
+        targetCam = new THREE.Vector3(0, 1.2, 29.5);
         targetLook = new THREE.Vector3(0, 0, 0);
         break;
       case 'iso':
-        targetCam = new THREE.Vector3(18, 12, 20);
+        targetCam = new THREE.Vector3(19.0, 11.0, 22.0);
         targetLook = new THREE.Vector3(0, 0, 0);
         break;
       case 'side':
-        targetCam = new THREE.Vector3(24, 0, 0);
-        targetLook = new THREE.Vector3(0, 0, -2);
+        targetCam = new THREE.Vector3(30.0, 1.2, 0);
+        targetLook = new THREE.Vector3(0, 0, -1);
         break;
       case 'top':
-        targetCam = new THREE.Vector3(0, 28, 0.1);
+        targetCam = new THREE.Vector3(0, 31.0, 3.5);
         targetLook = new THREE.Vector3(0, 0, 0);
         break;
       case 'internal':
-        targetCam = new THREE.Vector3(-4, 4, 12);
-        targetLook = new THREE.Vector3(-2, 1, 0);
+      case 'optics':
+        // Medium-wide angled optical perspective (preserves breathing space, no extreme close-up)
+        targetCam = new THREE.Vector3(-12.0, 7.5, 26.0);
+        targetLook = new THREE.Vector3(-1.0, 0.5, 0);
         break;
       case 'rear':
-        targetCam = new THREE.Vector3(0, 2, -24);
-        targetLook = new THREE.Vector3(0, 0, -6);
+        targetCam = new THREE.Vector3(0, 2.0, -30.5);
+        targetLook = new THREE.Vector3(0, 0, -2);
         break;
       case 'reset':
       default:
@@ -821,7 +853,7 @@ export default function ThreeCanvas({
       x: targetCam.x,
       y: targetCam.y,
       z: targetCam.z,
-      duration: 1.1,
+      duration: 1.4,
       ease: 'power2.inOut'
     });
 
@@ -829,7 +861,7 @@ export default function ThreeCanvas({
       x: targetLook.x,
       y: targetLook.y,
       z: targetLook.z,
-      duration: 1.1,
+      duration: 1.4,
       ease: 'power2.inOut'
     });
   }, [cameraPreset]);
@@ -926,13 +958,13 @@ export default function ThreeCanvas({
                 >
                   <div className={`px-2.5 py-1 rounded-md text-xs flex items-center gap-2 shadow-lg border backdrop-blur-md transition-colors ${
                     isSelected 
-                      ? 'bg-[#2589FF] text-[#F4F8FF] border-[#2589FF] font-medium shadow-[#2589FF]/30' 
-                      : 'navy-glass text-[#F4F8FF] border-[rgba(37,137,255,0.25)] hover:border-[#2589FF]'
+                      ? 'bg-[#398BFF] text-[#F4F7FC] border-[#398BFF] font-medium shadow-[#398BFF]/30' 
+                      : 'navy-glass text-[#F4F7FC] border-[rgba(57,139,255,0.25)] hover:border-[#398BFF]'
                   }`}>
-                    <span className="font-mono text-[10px] text-[#A9BCD5]">0{idx + 1}</span>
+                    <span className="font-mono text-[10px] text-[#B5C5DA]">0{idx + 1}</span>
                     <span className="text-[11px] whitespace-nowrap font-sans">{lbl.name}</span>
                   </div>
-                  <div className="w-px h-3 bg-[#2589FF]/60 mx-auto" />
+                  <div className="w-px h-3 bg-[#398BFF]/60 mx-auto" />
                 </div>
               );
             })}
