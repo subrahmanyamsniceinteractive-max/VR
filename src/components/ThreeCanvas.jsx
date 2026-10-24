@@ -54,10 +54,10 @@ export default function ThreeCanvas({
     const width = container.clientWidth;
     const height = container.clientHeight;
 
-    // Scene with dark graphite studio background
+    // Scene with premium deep navy technology background (#071426)
     const scene = new THREE.Scene();
-    scene.background = new THREE.Color(0x090a0f);
-    scene.fog = new THREE.FogExp2(0x090a0f, 0.015);
+    scene.background = new THREE.Color(0x071426);
+    scene.fog = new THREE.FogExp2(0x071426, 0.015);
     sceneRef.current = scene;
 
     // Camera
@@ -117,9 +117,9 @@ export default function ThreeCanvas({
     pmremGenerator.compileEquirectangularShader();
 
     const envScene = new THREE.Scene();
-    envScene.background = new THREE.Color(0x090a0f);
+    envScene.background = new THREE.Color(0x071426);
 
-    // Studio Softbox 1: Large Overhead Softbox
+    // Studio Softbox 1: Overhead Neutral White Key Softbox (preserves accurate headset materials)
     const sb1 = new THREE.Mesh(
       new THREE.PlaneGeometry(28, 22),
       new THREE.MeshBasicMaterial({ color: 0xffffff })
@@ -128,19 +128,19 @@ export default function ThreeCanvas({
     sb1.lookAt(0, 0, 0);
     envScene.add(sb1);
 
-    // Studio Softbox 2: Diffused Side Daylight Fill
+    // Studio Softbox 2: Rear Electric Blue Rim Softbox (creates subtle #2589FF edge highlights)
     const sb2 = new THREE.Mesh(
       new THREE.PlaneGeometry(12, 30),
-      new THREE.MeshBasicMaterial({ color: 0xf1f5f9 })
+      new THREE.MeshBasicMaterial({ color: 0x2589ff })
     );
-    sb2.position.set(-22, 10, -12);
+    sb2.position.set(-22, 12, -14);
     sb2.lookAt(0, 0, 0);
     envScene.add(sb2);
 
-    // Studio Softbox 3: Subtle Rim Strip
+    // Studio Softbox 3: Deep Navy Secondary Fill (#102A4C)
     const sb3 = new THREE.Mesh(
-      new THREE.PlaneGeometry(10, 24),
-      new THREE.MeshBasicMaterial({ color: 0xe2e8f0 })
+      new THREE.PlaneGeometry(12, 24),
+      new THREE.MeshBasicMaterial({ color: 0x102a4c })
     );
     sb3.position.set(-16, -8, 16);
     sb3.lookAt(0, 0, 0);
@@ -149,7 +149,7 @@ export default function ThreeCanvas({
     const envTexture = pmremGenerator.fromScene(envScene, 0.04).texture;
     scene.environment = envTexture;
 
-    // Physical Studio Lighting Rig (Neutral 5500K)
+    // Physical Studio Lighting Rig (Neutral Key + Restrained Electric Blue Rim)
     const keyLight = new THREE.DirectionalLight(0xffffff, 2.5);
     keyLight.position.set(14, 18, 16);
     keyLight.castShadow = true;
@@ -164,27 +164,30 @@ export default function ThreeCanvas({
     keyLight.shadow.camera.bottom = -16;
     scene.add(keyLight);
 
-    const rimLight = new THREE.DirectionalLight(0xffffff, 2.0);
-    rimLight.position.set(-16, 14, -18);
+    // Restrained Electric Blue Rim Lighting (#2589FF) on product silhouette
+    const rimLight = new THREE.DirectionalLight(0x2589ff, 1.85);
+    rimLight.position.set(-18, 14, -18);
     scene.add(rimLight);
 
-    const fillLight = new THREE.DirectionalLight(0xf1f5f9, 1.2);
+    // Soft daylight fill (#EAF3FF)
+    const fillLight = new THREE.DirectionalLight(0xeaf3ff, 1.15);
     fillLight.position.set(-16, -8, 14);
     scene.add(fillLight);
 
-    const hemiLight = new THREE.HemisphereLight(0x27272a, 0x090a0f, 0.85);
+    // Subtle blue glow ambient (#174A83 sky, #071426 deep navy ground)
+    const hemiLight = new THREE.HemisphereLight(0x174a83, 0x071426, 0.85);
     scene.add(hemiLight);
 
-    // Contact Ground Shadow Plane
+    // Deep Navy Contact Ground Shadow Plane
     const shadowCanvas = document.createElement('canvas');
     shadowCanvas.width = 512;
     shadowCanvas.height = 512;
     const ctx = shadowCanvas.getContext('2d');
     const grad = ctx.createRadialGradient(256, 256, 0, 256, 256, 256);
-    grad.addColorStop(0, 'rgba(0, 0, 0, 0.82)');
-    grad.addColorStop(0.35, 'rgba(0, 0, 0, 0.42)');
-    grad.addColorStop(0.7, 'rgba(0, 0, 0, 0.12)');
-    grad.addColorStop(1, 'rgba(0, 0, 0, 0)');
+    grad.addColorStop(0, 'rgba(4, 12, 24, 0.90)');
+    grad.addColorStop(0.35, 'rgba(7, 20, 38, 0.52)');
+    grad.addColorStop(0.7, 'rgba(16, 42, 76, 0.16)');
+    grad.addColorStop(1, 'rgba(7, 20, 38, 0)');
     ctx.fillStyle = grad;
     ctx.fillRect(0, 0, 512, 512);
 
@@ -704,22 +707,22 @@ export default function ThreeCanvas({
           ease: 'power3.inOut'
         });
 
-        // Highlight selected mesh subtly without neon glow
+        // Highlight selected mesh with subtle blue glow (#174A83)
         meshesMapRef.current.forEach((mesh, id) => {
           if (id === selectedComponentId) {
             if (mesh.material.emissive) {
               gsap.to(mesh.material.emissive, {
-                r: 0.12,
-                g: 0.12,
-                b: 0.15,
+                r: 0.09,
+                g: 0.29,
+                b: 0.55,
                 duration: 0.3
               });
-              mesh.material.emissiveIntensity = 0.5;
+              mesh.material.emissiveIntensity = 0.65;
             }
           } else {
             if (mesh.material.opacity !== undefined) {
               mesh.material.transparent = true;
-              gsap.to(mesh.material, { opacity: 0.28, duration: 0.3 });
+              gsap.to(mesh.material, { opacity: 0.25, duration: 0.3 });
             }
           }
         });
@@ -921,15 +924,15 @@ export default function ThreeCanvas({
                     onSelectComponent?.(lbl.id);
                   }}
                 >
-                  <div className={`px-2.5 py-1 rounded-md text-xs flex items-center gap-2 shadow-lg border backdrop-blur-md ${
+                  <div className={`px-2.5 py-1 rounded-md text-xs flex items-center gap-2 shadow-lg border backdrop-blur-md transition-colors ${
                     isSelected 
-                      ? 'bg-white text-zinc-950 border-white font-medium shadow-white/10' 
-                      : 'bg-zinc-950/80 border-zinc-800 text-zinc-300 hover:border-zinc-500 hover:text-white'
+                      ? 'bg-[#2589FF] text-[#F4F8FF] border-[#2589FF] font-medium shadow-[#2589FF]/30' 
+                      : 'navy-glass text-[#F4F8FF] border-[rgba(37,137,255,0.25)] hover:border-[#2589FF]'
                   }`}>
-                    <span className="font-mono text-[10px] text-zinc-400">0{idx + 1}</span>
+                    <span className="font-mono text-[10px] text-[#A9BCD5]">0{idx + 1}</span>
                     <span className="text-[11px] whitespace-nowrap font-sans">{lbl.name}</span>
                   </div>
-                  <div className="w-px h-3 bg-zinc-600 mx-auto" />
+                  <div className="w-px h-3 bg-[#2589FF]/60 mx-auto" />
                 </div>
               );
             })}

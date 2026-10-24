@@ -2,58 +2,70 @@
 
 @layer base {
   :root {
-    --bg-graphite: #090a0f;
-    --bg-surface: rgba(18, 19, 24, 0.76);
-    --border-hairline: rgba(255, 255, 255, 0.08);
-    --border-subtle: rgba(255, 255, 255, 0.14);
-    --text-primary: #f5f5f7;
-    --text-secondary: #86868b;
-    --text-muted: #6e6e73;
-    --accent: #ffffff;
-    --accent-blue: #2997ff;
+    /* Premium Blue Technology Theme Palette */
+    --bg-hero: #071426;
+    --bg-dark-secondary: #102A4C;
+    --accent-blue: #2589FF;
+    --blue-glow: #174A83;
+    --bg-light-tech: #EAF3FF;
+    --text-dark-primary: #F4F8FF;
+    --text-dark-secondary: #A9BCD5;
+    --text-light-primary: #10233B;
+    --border-dark: rgba(37, 137, 255, 0.16);
+    --border-light: rgba(16, 42, 76, 0.18);
   }
 
   html, body {
     width: 100%;
     height: 100%;
     overflow-x: hidden;
-    background-color: var(--bg-graphite);
-    color: var(--text-primary);
+    background-color: var(--bg-hero);
+    color: var(--text-dark-primary);
     font-family: -apple-system, BlinkMacSystemFont, 'SF Pro Display', 'Inter', sans-serif;
     letter-spacing: -0.015em;
     user-select: none;
   }
 }
 
-/* Custom Minimalist Scrollbar */
+/* Custom Minimalist Blue Scrollbar */
 ::-webkit-scrollbar {
-  width: 5px;
-  height: 5px;
+  width: 6px;
+  height: 6px;
 }
 ::-webkit-scrollbar-track {
-  background: #090a0f;
+  background: #071426;
 }
 ::-webkit-scrollbar-thumb {
-  background: #27272a;
-  border-radius: 2px;
+  background: #174A83;
+  border-radius: 3px;
+  border: 1px solid rgba(37, 137, 255, 0.2);
 }
 ::-webkit-scrollbar-thumb:hover {
-  background: #3f3f46;
+  background: #2589FF;
 }
 
-/* Apple-Grade Minimalist Glass Surface */
-.apple-glass {
-  background: rgba(16, 17, 22, 0.82);
+/* Premium Deep Navy Glass Surface */
+.navy-glass {
+  background: rgba(16, 42, 76, 0.82);
   backdrop-filter: blur(28px);
   -webkit-backdrop-filter: blur(28px);
-  border: 1px solid rgba(255, 255, 255, 0.09);
-  box-shadow: 0 16px 40px rgba(0, 0, 0, 0.6);
+  border: 1px solid rgba(37, 137, 255, 0.20);
+  box-shadow: 0 16px 40px rgba(7, 20, 38, 0.75), inset 0 1px 0 rgba(255, 255, 255, 0.08);
 }
 
-.apple-pill-btn {
-  background: rgba(255, 255, 255, 0.06);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: #e4e4e7;
+/* Ice-White Technical Section Surface */
+.light-tech-card {
+  background: #EAF3FF;
+  color: #10233B;
+  border: 1px solid rgba(37, 137, 255, 0.30);
+  box-shadow: 0 20px 48px rgba(7, 20, 38, 0.55);
+}
+
+/* Interactive Pill Buttons */
+.navy-pill-btn {
+  background: rgba(23, 74, 131, 0.38);
+  border: 1px solid rgba(37, 137, 255, 0.28);
+  color: #F4F8FF;
   font-size: 0.78rem;
   letter-spacing: 0.02em;
   transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
@@ -62,26 +74,58 @@
   justify-content: center;
   cursor: pointer;
 }
-.apple-pill-btn:hover {
-  background: rgba(255, 255, 255, 0.14);
-  border-color: rgba(255, 255, 255, 0.25);
-  color: #ffffff;
+.navy-pill-btn:hover {
+  background: rgba(37, 137, 255, 0.22);
+  border-color: #2589FF;
+  color: #FFFFFF;
+  box-shadow: 0 0 16px rgba(37, 137, 255, 0.28);
 }
-.apple-pill-btn:active {
+.navy-pill-btn:active {
   transform: scale(0.98);
 }
-.apple-pill-btn.active {
-  background: #ffffff;
-  color: #090a0f;
-  border-color: #ffffff;
+.navy-pill-btn.active {
+  background: #2589FF;
+  color: #F4F8FF;
+  border-color: #2589FF;
   font-weight: 600;
+  box-shadow: 0 0 20px rgba(37, 137, 255, 0.40);
 }
 
-/* Industrial Engineering Badge */
+/* Electric Blue Action Button */
+.blue-action-btn {
+  background: #2589FF;
+  color: #F4F8FF;
+  border: 1px solid rgba(255, 255, 255, 0.25);
+  font-weight: 600;
+  box-shadow: 0 4px 18px rgba(37, 137, 255, 0.42);
+  transition: all 0.2s cubic-bezier(0.16, 1, 0.3, 1);
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.blue-action-btn:hover {
+  background: #3c98ff;
+  box-shadow: 0 6px 24px rgba(37, 137, 255, 0.55);
+  transform: translateY(-1px);
+}
+.blue-action-btn:active {
+  transform: translateY(0);
+}
+
+/* Industrial Engineering Spec Badge */
 .spec-tag {
   font-family: 'JetBrains Mono', -apple-system, monospace;
   font-size: 0.65rem;
-  letter-spacing: 0.06em;
+  letter-spacing: 0.08em;
   text-transform: uppercase;
-  color: #a1a1aa;
+  color: #A9BCD5;
+}
+
+.spec-tag-blue {
+  font-family: 'JetBrains Mono', -apple-system, monospace;
+  font-size: 0.65rem;
+  letter-spacing: 0.08em;
+  text-transform: uppercase;
+  color: #2589FF;
 }
