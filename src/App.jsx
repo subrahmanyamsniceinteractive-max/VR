@@ -6,7 +6,7 @@ import ComponentDrawer from './components/ComponentDrawer';
 import ScrollStory from './components/ScrollStory';
 import HeaderNav from './components/HeaderNav';
 import LoadingScreen from './components/LoadingScreen';
-import ModelReplacementGuide from './components/ModelReplacementGuide';
+import EngineeringAssetInspector from './components/EngineeringAssetInspector';
 import quest3Data from './data/componentsData.json';
 import visionProData from './data/visionProData.json';
 import gsap from 'gsap';
@@ -23,6 +23,9 @@ export default function App() {
   const [hoveredComponentId, setHoveredComponentId] = useState(null);
   const [cameraPreset, setCameraPreset] = useState('front');
   const [showLabels, setShowLabels] = useState(true);
+  const [filterCategory, setFilterCategory] = useState('all');
+  const [customModelUrl, setCustomModelUrl] = useState(null);
+  const [modelStats, setModelStats] = useState(null);
   const [isDrawerOpen, setIsDrawerOpen] = useState(false);
   const [isGuideOpen, setIsGuideOpen] = useState(false);
 
@@ -36,10 +39,21 @@ export default function App() {
     if (type === headsetType) return;
     setIsLoading(true);
     setLoadProgress(10);
+    setCustomModelUrl(null);
     setHeadsetType(type);
     setSelectedComponentId(null);
     setExplodeProgress(0.0);
+    setFilterCategory('all');
     setCameraPreset('front');
+  };
+
+  // Custom Local Model Loading
+  const handleCustomModelLoad = (url, fileName) => {
+    setIsLoading(true);
+    setLoadProgress(20);
+    setCustomModelUrl(url);
+    setSelectedComponentId(null);
+    setExplodeProgress(0.0);
   };
 
   // Smooth Explode / Assemble Transitions
@@ -138,7 +152,7 @@ export default function App() {
         <LoadingScreen progress={loadProgress} />
       )}
 
-      {/* Header Navigation with Headset Switcher */}
+      {/* Header Navigation with Headset Switcher & Real-time Verified Stats */}
       <HeaderNav
         headsetType={headsetType}
         onSelectHeadset={handleSelectHeadset}
@@ -146,6 +160,7 @@ export default function App() {
         onSwitchMode={handleSwitchMode}
         onOpenDrawer={() => setIsDrawerOpen(true)}
         onOpenGuide={() => setIsGuideOpen(true)}
+        modelStats={modelStats}
       />
 
       {/* 3D Scene Viewport */}
@@ -164,6 +179,9 @@ export default function App() {
           onHoverComponent={setHoveredComponentId}
           cameraPreset={cameraPreset}
           showLabels={showLabels}
+          filterCategory={filterCategory}
+          customModelUrl={customModelUrl}
+          onModelInspected={setModelStats}
           onLoadProgress={(p) => setLoadProgress(p)}
           onLoaded={() => setTimeout(() => setIsLoading(false), 400)}
         />
@@ -187,7 +205,9 @@ export default function App() {
           onToggleDrawer={() => setIsDrawerOpen(!isDrawerOpen)}
           isDrawerOpen={isDrawerOpen}
           onResetCamera={handleResetCamera}
-          componentsCount={activeData.length}
+          componentsCount={modelStats?.meshCount || activeData.length}
+          filterCategory={filterCategory}
+          onSelectFilterCategory={setFilterCategory}
         />
       )}
 
@@ -223,10 +243,12 @@ export default function App() {
         title={`${currentTitle} Assembly`}
       />
 
-      {/* 3D Model Replacement & Architecture Guide */}
-      <ModelReplacementGuide
+      {/* 3D Model Engineering Inspection & CAD Ingestion Modal */}
+      <EngineeringAssetInspector
         isOpen={isGuideOpen}
         onClose={() => setIsGuideOpen(false)}
+        modelStats={modelStats}
+        onCustomModelLoad={handleCustomModelLoad}
       />
     </div>
   );

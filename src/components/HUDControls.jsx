@@ -25,7 +25,9 @@ export default function HUDControls({
   onToggleDrawer,
   isDrawerOpen,
   onResetCamera,
-  componentsCount = 18
+  componentsCount = 18,
+  filterCategory = 'all',
+  onSelectFilterCategory
 }) {
   const toggleFullscreen = () => {
     if (!document.fullscreenElement) {
@@ -43,8 +45,35 @@ export default function HUDControls({
     { id: 'internal', label: 'Optics' }
   ];
 
+  const categories = [
+    { id: 'all', label: 'All Layers' },
+    { id: 'exterior', label: 'Exterior Shell' },
+    { id: 'optics', label: 'Pancake Optics' },
+    { id: 'electronics', label: 'Compute & Thermal' },
+    { id: 'power', label: 'Battery' },
+    { id: 'comfort', label: 'Comfort & Strap' }
+  ];
+
   return (
-    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2.5 w-full max-w-3xl px-4 pointer-events-none">
+    <div className="absolute bottom-6 left-1/2 -translate-x-1/2 z-20 flex flex-col items-center gap-2 w-full max-w-3xl px-4 pointer-events-none">
+      
+      {/* Subassembly Category Selector Tabs */}
+      <div className="apple-glass rounded-full px-2 py-1 pointer-events-auto flex items-center gap-1 max-w-full overflow-x-auto text-[11px] font-mono">
+        {categories.map((c) => (
+          <button
+            key={c.id}
+            onClick={() => onSelectFilterCategory?.(c.id)}
+            className={`px-2.5 py-1 rounded-full whitespace-nowrap transition-all ${
+              filterCategory === c.id
+                ? 'bg-white text-zinc-950 font-semibold shadow-sm'
+                : 'text-zinc-400 hover:text-white'
+            }`}
+          >
+            {c.label}
+          </button>
+        ))}
+      </div>
+
       {/* Upper Timeline Scrubber Bar */}
       <div className="w-full apple-glass rounded-2xl px-5 py-3 pointer-events-auto flex flex-wrap items-center justify-between gap-4">
         {/* Play & Explode / Assemble */}
@@ -173,6 +202,7 @@ export default function HUDControls({
           <Maximize2 size={12} />
         </button>
       </div>
+
     </div>
   );
 }

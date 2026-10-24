@@ -20,6 +20,9 @@ export default function ThreeCanvas({
   onHoverComponent,
   cameraPreset = null,
   showLabels = true,
+  filterCategory = 'all',
+  customModelUrl = null,
+  onModelInspected,
   onLoadProgress,
   onLoaded
 }) {
@@ -39,9 +42,9 @@ export default function ThreeCanvas({
   const isInteractingRef = useRef(false);
 
   const activeComponentsData = headsetType === 'quest3' ? quest3Data : visionProData;
-  const activeModelPath = headsetType === 'quest3' 
+  const activeModelPath = customModelUrl || (headsetType === 'quest3' 
     ? '/models/quest3_exploded.glb' 
-    : '/models/vision_pro_exploded.glb';
+    : '/models/vision_pro_exploded.glb');
 
   // 1. Initialize Scene, Studio Lighting & Post-Processing
   useEffect(() => {
@@ -266,20 +269,57 @@ export default function ThreeCanvas({
                   metalness: 0.03,
                   envMapIntensity: 1.0
                 });
-              } else if (compId === 'optics_lens_left' || compId === 'optics_lens_right') {
-                // Optical multi-element glass
+              } else if (compId === 'exterior_sensors') {
+                // High-gloss obsidian optical acrylic with AR camera optics
                 child.material = new THREE.MeshPhysicalMaterial({
-                  color: 0x090a10,
-                  roughness: 0.02,
-                  metalness: 0.06,
-                  transmission: 0.95,
+                  color: 0x07080a,
+                  roughness: 0.08,
+                  metalness: 0.20,
+                  clearcoat: 0.95,
+                  clearcoatRoughness: 0.08,
+                  envMapIntensity: 2.2
+                });
+              } else if (compId === 'exterior_side_arms') {
+                // Cantilever temple arms & audio slots
+                child.material = new THREE.MeshPhysicalMaterial({
+                  color: 0xf4f4f6,
+                  roughness: 0.36,
+                  metalness: 0.02,
+                  clearcoat: 0.15,
+                  envMapIntensity: 1.0
+                });
+              } else if (compId === 'optics_lens_left' || compId === 'optics_lens_right') {
+                // Optical multi-element glass with realistic refraction
+                child.material = new THREE.MeshPhysicalMaterial({
+                  color: 0xffffff,
+                  roughness: 0.03,
+                  metalness: 0.02,
+                  transmission: 0.97,
                   ior: 1.54,
-                  thickness: 1.8,
-                  specularIntensity: 1.2,
-                  specularColor: new THREE.Color(0xa1a1aa),
-                  transparent: true,
-                  opacity: 0.92,
-                  envMapIntensity: 1.8
+                  thickness: 2.2,
+                  specularIntensity: 1.4,
+                  specularColor: new THREE.Color(0xffffff),
+                  transparent: false,
+                  envMapIntensity: 2.2
+                });
+              } else if (compId === 'optics_displays') {
+                // Dual Fast-Switch LCD Infinite Display Matrix
+                child.material = new THREE.MeshStandardMaterial({
+                  color: 0x080c14,
+                  map: textures.display,
+                  roughness: 0.20,
+                  metalness: 0.40,
+                  emissive: new THREE.Color(0x0e2438),
+                  emissiveIntensity: 0.50,
+                  envMapIntensity: 1.4
+                });
+              } else if (compId === 'optics_brackets') {
+                // Die-cast magnesium IPD carriage & guide rods
+                child.material = new THREE.MeshStandardMaterial({
+                  color: 0x52525b,
+                  roughness: 0.28,
+                  metalness: 0.88,
+                  envMapIntensity: 1.6
                 });
               } else if (compId === 'electronics_motherboard') {
                 child.material = new THREE.MeshStandardMaterial({
@@ -297,6 +337,13 @@ export default function ThreeCanvas({
                   metalness: 0.95,
                   envMapIntensity: 1.8
                 });
+              } else if (compId === 'electronics_cooling_fan_heatsink') {
+                child.material = new THREE.MeshStandardMaterial({
+                  color: 0xc86d38, // sintered pure copper
+                  roughness: 0.22,
+                  metalness: 0.96,
+                  envMapIntensity: 2.0
+                });
               } else if (compId === 'power_battery') {
                 child.material = new THREE.MeshStandardMaterial({
                   color: 0xd4d4d8,
@@ -305,27 +352,49 @@ export default function ThreeCanvas({
                   metalness: 0.85,
                   envMapIntensity: 1.5
                 });
-              } else if (compId === 'electronics_cooling_fan_heatsink') {
+              } else if (compId === 'power_connectors') {
                 child.material = new THREE.MeshStandardMaterial({
-                  color: 0xc86d38, // sintered copper
-                  roughness: 0.22,
-                  metalness: 0.96,
-                  envMapIntensity: 2.0
+                  color: 0x222328,
+                  roughness: 0.35,
+                  metalness: 0.65,
+                  envMapIntensity: 1.4
                 });
-              } else if (compId === 'comfort_head_strap' || compId === 'comfort_cushion_padding') {
+              } else if (compId === 'electronics_flex_cables') {
+                child.material = new THREE.MeshStandardMaterial({
+                  color: 0xb5781a,
+                  roughness: 0.25,
+                  metalness: 0.82,
+                  envMapIntensity: 1.8
+                });
+              } else if (compId === 'electronics_connectivity_rf') {
+                child.material = new THREE.MeshStandardMaterial({
+                  color: 0xb0b4bc,
+                  roughness: 0.24,
+                  metalness: 0.94,
+                  envMapIntensity: 1.8
+                });
+              } else if (compId === 'comfort_facial_interface') {
+                child.material = new THREE.MeshStandardMaterial({
+                  color: 0x1c1e24,
+                  roughness: 0.88,
+                  metalness: 0.02,
+                  envMapIntensity: 0.4
+                });
+              } else if (compId === 'comfort_cushion_padding') {
+                child.material = new THREE.MeshStandardMaterial({
+                  color: 0x14161a,
+                  map: textures.strap,
+                  roughness: 0.96,
+                  metalness: 0.0,
+                  envMapIntensity: 0.3
+                });
+              } else if (compId === 'comfort_head_strap') {
                 child.material = new THREE.MeshStandardMaterial({
                   color: 0x27272a,
                   map: textures.strap,
                   roughness: 0.92,
                   metalness: 0.02,
                   envMapIntensity: 0.5
-                });
-              } else if (compId === 'optics_brackets') {
-                child.material = new THREE.MeshStandardMaterial({
-                  color: 0x52525b,
-                  roughness: 0.28,
-                  metalness: 0.88,
-                  envMapIntensity: 1.6
                 });
               }
             } else {
@@ -381,6 +450,38 @@ export default function ThreeCanvas({
             child.userData.baseMaterial = child.material.clone();
             meshesMapRef.current.set(compId, child);
           }
+        });
+
+        // Dynamic 3D Model Structural Inspection
+        const inspectedMeshes = [];
+        let totalVerts = 0;
+        let totalFaces = 0;
+
+        meshesMapRef.current.forEach((mesh, id) => {
+          const vCount = mesh.geometry?.attributes?.position?.count || 0;
+          const fCount = mesh.geometry?.index ? mesh.geometry.index.count / 3 : vCount / 3;
+          totalVerts += vCount;
+          totalFaces += fCount;
+
+          const meta = activeComponentsData.find(c => c.id === id);
+          inspectedMeshes.push({
+            id,
+            name: meta ? meta.name : id,
+            category: meta ? meta.category : 'Subassembly',
+            groupName: meta ? meta.groupName : 'GENERAL',
+            specs: meta ? meta.specs : '',
+            vertices: vCount,
+            faces: Math.round(fCount),
+            isHighDensity: vCount > 1000
+          });
+        });
+
+        onModelInspected?.({
+          modelPath: activeModelPath,
+          meshCount: inspectedMeshes.length,
+          totalVertices: totalVerts,
+          totalFaces: Math.round(totalFaces),
+          meshes: inspectedMeshes
         });
 
         onLoadProgress?.(100);
@@ -468,7 +569,72 @@ export default function ThreeCanvas({
     };
     animate();
 
+    // Drag & Drop external CAD / GLB model loader for real engineering assets
+    const handleDragOver = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+    };
+
+    const handleDrop = (e) => {
+      e.preventDefault();
+      e.stopPropagation();
+      const files = e.dataTransfer?.files;
+      if (files && files.length > 0) {
+        const file = files[0];
+        if (file.name.toLowerCase().endsWith('.glb') || file.name.toLowerCase().endsWith('.gltf')) {
+          const blobUrl = URL.createObjectURL(file);
+          loader.load(blobUrl, (gltf) => {
+            const oldRoot = scene.getObjectByName('Headset_Root');
+            if (oldRoot) scene.remove(oldRoot);
+            const model = gltf.scene;
+            model.name = 'Headset_Root';
+            scene.add(model);
+            meshesMapRef.current.clear();
+            const droppedMeshes = [];
+            let vTotal = 0;
+            let fTotal = 0;
+            model.traverse((child) => {
+              if (child.isMesh) {
+                child.castShadow = true;
+                child.receiveShadow = true;
+                const mName = child.name || `mesh_${droppedMeshes.length + 1}`;
+                child.userData.componentId = mName;
+                child.userData.originalPos = child.position.clone();
+                child.userData.baseMaterial = child.material.clone();
+                meshesMapRef.current.set(mName, child);
+                const v = child.geometry?.attributes?.position?.count || 0;
+                const f = child.geometry?.index ? child.geometry.index.count / 3 : v / 3;
+                vTotal += v;
+                fTotal += f;
+                droppedMeshes.push({
+                  id: mName,
+                  name: mName,
+                  category: 'Imported CAD Mesh',
+                  groupName: 'CUSTOM CAD IMPORT',
+                  vertices: v,
+                  faces: Math.round(f),
+                  isHighDensity: v > 1000
+                });
+              }
+            });
+            onModelInspected?.({
+              modelPath: `Local File: ${file.name} (${(file.size / 1024 / 1024).toFixed(2)} MB)`,
+              meshCount: droppedMeshes.length,
+              totalVertices: vTotal,
+              totalFaces: Math.round(fTotal),
+              meshes: droppedMeshes
+            });
+          });
+        }
+      }
+    };
+
+    container.addEventListener('dragover', handleDragOver);
+    container.addEventListener('drop', handleDrop);
+
     return () => {
+      container.removeEventListener('dragover', handleDragOver);
+      container.removeEventListener('drop', handleDrop);
       window.removeEventListener('resize', handleResize);
       if (animFrameIdRef.current) cancelAnimationFrame(animFrameIdRef.current);
       if (renderer.domElement && container.contains(renderer.domElement)) {
@@ -572,6 +738,39 @@ export default function ThreeCanvas({
       });
     }
   }, [selectedComponentId, activeComponentsData]);
+
+  // 3b. Handle Subassembly Category Filtering
+  useEffect(() => {
+    if (!meshesMapRef.current || meshesMapRef.current.size === 0) return;
+    
+    meshesMapRef.current.forEach((mesh, compId) => {
+      const compMeta = activeComponentsData.find(c => c.id === compId);
+      if (!compMeta) return;
+
+      let isVisible = true;
+      if (filterCategory === 'exterior') {
+        isVisible = compMeta.group === 'group_exterior';
+      } else if (filterCategory === 'optics') {
+        isVisible = compMeta.group === 'group_optics';
+      } else if (filterCategory === 'electronics') {
+        isVisible = compMeta.group === 'group_electronics';
+      } else if (filterCategory === 'power') {
+        isVisible = compMeta.group === 'group_power';
+      } else if (filterCategory === 'comfort') {
+        isVisible = compMeta.group === 'group_comfort';
+      }
+
+      if (mesh.material) {
+        mesh.material.transparent = true;
+        const targetOpacity = isVisible ? (mesh.userData.baseMaterial?.opacity || 1.0) : 0.08;
+        gsap.to(mesh.material, {
+          opacity: targetOpacity,
+          duration: 0.45,
+          overwrite: 'auto'
+        });
+      }
+    });
+  }, [filterCategory, activeComponentsData]);
 
   // 4. Handle Camera Presets
   useEffect(() => {

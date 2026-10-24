@@ -1,12 +1,12 @@
 [
   {
     "id": "exterior_faceplate",
-    "name": "Front Faceplate Visor",
+    "name": "Satin Polycarbonate Faceplate",
     "group": "group_exterior",
-    "groupName": "EXTERIOR & HOUSING",
+    "groupName": "EXTERIOR ARCHITECTURE",
     "category": "Exterior Shell",
-    "specs": "Matte injection-molded polymer visor, 3 precision optical pill cutouts, debossed Meta emblem, snap-fit chassis clips.",
-    "description": "Forms the front aerodynamic aesthetic of the headset. Encloses the dual stereoscopic RGB cameras and central active depth sensor array while channeling internal airflow.",
+    "specs": "Injection-molded high-impact polycarbonate (PC-ABS), satin anti-glare finish, triple pill sensor apertures.",
+    "description": "Forms the front aerodynamic aesthetic shell while providing mechanical shock protection for the internal optical sensor array.",
     "verified": true,
     "assembled": [
       0.0,
@@ -16,23 +16,23 @@
     "exploded": [
       0.0,
       0.0,
-      14.0
+      11.0
     ],
     "cameraTarget": [
       0.0,
       0.0,
-      14.0
+      11.0
     ],
     "cameraDist": 16.0
   },
   {
     "id": "exterior_housing",
-    "name": "Main Chassis & Perimeter Housing",
+    "name": "Contoured Unibody Chassis Housing",
     "group": "group_exterior",
-    "groupName": "EXTERIOR & HOUSING",
-    "category": "Chassis & Frame",
-    "specs": "High-rigidity structural polycarbonate enclosure, continuous IPD dial wheel slot, volume rocker, top ventilation exhaust grilles.",
-    "description": "Forms the structural core enclosing optical, computing, and thermal subassemblies into a rigid, impact-resistant chassis.",
+    "groupName": "CHASSIS & AIRFLOW",
+    "category": "Structural Frame",
+    "specs": "Precision engineered unibody enclosure with top convective ventilation slots, IPD scroll wheel opening, and bottom volume rockers.",
+    "description": "The central structural core enclosing the main logic board, battery, and pancake optical barrels with sub-millimeter tolerances.",
     "verified": true,
     "assembled": [
       0.0,
@@ -42,23 +42,23 @@
     "exploded": [
       0.0,
       0.0,
-      8.5
+      0.0
     ],
     "cameraTarget": [
       0.0,
       0.0,
-      8.5
+      0.0
     ],
-    "cameraDist": 18.0
+    "cameraDist": 20.0
   },
   {
     "id": "exterior_sensors",
-    "name": "Perception Sensor & Camera Cluster",
+    "name": "Perception Tracking & Active Depth Cluster",
     "group": "group_exterior",
-    "groupName": "SENSORS & TRACKING",
-    "category": "Spatial Tracking",
-    "specs": "2x 4MP RGB 18 PPD passthrough cameras, 1x active VCSEL IR depth sensor, 2x wide-angle 6DoF corner tracking cameras.",
-    "description": "Captures stereoscopic color video passthrough and sub-millimeter hand tracking, projecting real-time room depth maps.",
+    "groupName": "PERCEPTION ARCHITECTURE",
+    "category": "Spatial Perception",
+    "specs": "Dual 4MP RGB color passthrough cameras (18 PPD), VCSEL infrared depth projector, and 4 wide-angle 6DoF tracking cameras.",
+    "description": "Enables stereoscopic mixed-reality video passthrough and sub-millimeter room mesh spatial tracking with real-time occlusion.",
     "verified": true,
     "assembled": [
       0.0,
@@ -68,153 +68,101 @@
     "exploded": [
       0.0,
       0.0,
-      17.0
+      15.5
     ],
     "cameraTarget": [
       0.0,
       0.0,
-      17.0
-    ],
-    "cameraDist": 12.0
-  },
-  {
-    "id": "exterior_side_arms",
-    "name": "Temple Arms & Spatial Audio Chambers",
-    "group": "group_exterior",
-    "groupName": "AUDIO & ERGONOMICS",
-    "category": "Acoustics & Ergonomics",
-    "specs": "Dual balanced spatial audio sound chambers with tuned waveguides, rotational temple friction hinges, USB-C passthrough.",
-    "description": "Directs 3D spatial audio toward the ears with 40% louder volume than Quest 2, while providing smooth rotational tilting for comfort.",
-    "verified": true,
-    "assembled": [
-      0.0,
-      0.0,
-      0.0
-    ],
-    "exploded": [
-      0.0,
-      0.0,
-      -1.5
-    ],
-    "cameraTarget": [
-      9.0,
-      0.0,
-      -4.0
-    ],
-    "cameraDist": 16.0
-  },
-  {
-    "id": "optics_lens_left",
-    "name": "Left Folded Pancake Optical Module",
-    "group": "group_optics",
-    "groupName": "OPTICS & DISPLAY",
-    "category": "Optical Engineering",
-    "specs": "Multi-element folded pancake optics, 110\u00b0 diagonal FOV, polarizing beam splitter, quarter-wave retarding element.",
-    "description": "Folds light back and forth between polarizing surfaces, drastically reducing optical stack depth while eliminating visual glare.",
-    "verified": true,
-    "assembled": [
-      0.0,
-      0.0,
-      0.0
-    ],
-    "exploded": [
-      -5.8,
-      0.0,
-      2.5
-    ],
-    "cameraTarget": [
-      -5.8,
-      0.0,
-      2.5
-    ],
-    "cameraDist": 10.0
-  },
-  {
-    "id": "optics_lens_right",
-    "name": "Right Folded Pancake Optical Module",
-    "group": "group_optics",
-    "groupName": "OPTICS & DISPLAY",
-    "category": "Optical Engineering",
-    "specs": "Multi-element folded pancake optics, 110\u00b0 diagonal FOV, polarizing beam splitter, precision black anodized retaining barrel.",
-    "description": "Provides matched stereoscopic visual acuity for the right eye with ultra-sharp edge-to-edge optical resolution.",
-    "verified": true,
-    "assembled": [
-      0.0,
-      0.0,
-      0.0
-    ],
-    "exploded": [
-      5.8,
-      0.0,
-      2.5
-    ],
-    "cameraTarget": [
-      5.8,
-      0.0,
-      2.5
-    ],
-    "cameraDist": 10.0
-  },
-  {
-    "id": "optics_displays",
-    "name": "Dual Fast-Switch LCD Displays",
-    "group": "group_optics",
-    "groupName": "OPTICS & DISPLAY",
-    "category": "Display Technology",
-    "specs": "Dual Fast-Switch LCDs, 2064 x 2208 pixels per eye (4.55 million pixels per eye), 90Hz / 120Hz refresh rates, MIPI D-PHY.",
-    "description": "Delivers nearly 30% higher resolution than Quest 2 with crisp text readability and smooth motion rendering for immersive VR and MR experiences.",
-    "verified": true,
-    "assembled": [
-      0.0,
-      0.0,
-      0.0
-    ],
-    "exploded": [
-      0.0,
-      -1.8,
-      -2.5
-    ],
-    "cameraTarget": [
-      0.0,
-      -1.8,
-      -2.5
-    ],
-    "cameraDist": 12.0
-  },
-  {
-    "id": "optics_brackets",
-    "name": "Magnesium Carrier Frame & IPD Mechanism",
-    "group": "group_optics",
-    "groupName": "OPTICS & DISPLAY",
-    "category": "Mechanical Engineering",
-    "specs": "Die-cast magnesium-aluminum carrier frame, stainless steel guide rails, precision rack-and-pinion IPD gear drive (58mm\u201371mm).",
-    "description": "Provides micro-adjustable physical spacing between the optical modules, enabling users to seamlessly dial in their exact eye distance.",
-    "verified": true,
-    "assembled": [
-      0.0,
-      0.0,
-      0.0
-    ],
-    "exploded": [
-      0.0,
-      3.5,
-      0.0
-    ],
-    "cameraTarget": [
-      0.0,
-      3.5,
-      0.0
+      15.5
     ],
     "cameraDist": 14.0
   },
   {
-    "id": "electronics_motherboard",
-    "name": "Main Logic Board (10-Layer HDI PCB)",
-    "group": "group_electronics",
-    "groupName": "COMPUTE & ELECTRONICS",
-    "category": "Compute Architecture",
-    "specs": "10-layer high-density interconnect (HDI) PCB, nickel-plated EMI shielding cans, high-speed differential signal traces.",
-    "description": "The central computing motherboard interconnecting processing silicon, sensor pipelines, high-bandwidth displays, and power rails.",
+    "id": "exterior_side_arms",
+    "name": "Cantilever Temple Arms & Spatial Speakers",
+    "group": "group_exterior",
+    "groupName": "ACOUSTICS & ERGONOMICS",
+    "category": "Spatial Audio",
+    "specs": "Dual-driver integrated acoustic chambers with bass reflex ports, 40% louder than Quest 2, calibrated 3D HRTF spatial audio.",
+    "description": "Rigid cantilever arms transfer clamping pressure evenly while channeling spatial audio directly toward the user's ears without headphones.",
+    "verified": true,
+    "assembled": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "exploded": [
+      5.5,
+      0.0,
+      -1.0
+    ],
+    "cameraTarget": [
+      5.5,
+      0.0,
+      -1.0
+    ],
+    "cameraDist": 15.0
+  },
+  {
+    "id": "optics_lens_left",
+    "name": "Left Folded Pancake Optical Assembly",
+    "group": "group_optics",
+    "groupName": "OPTICAL TRAIN",
+    "category": "Pancake Optics",
+    "specs": "Multi-element polarized folded pancake lens architecture, 110\u00b0 diagonal FOV, edge-to-edge optical clarity, anti-reflective coating.",
+    "description": "Folded polarizing geometry bounces incoming display light multiple times, slashing headset thickness by 40% compared to Fresnel lenses.",
+    "verified": true,
+    "assembled": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "exploded": [
+      -6.2,
+      0.0,
+      -4.5
+    ],
+    "cameraTarget": [
+      -6.2,
+      0.0,
+      -4.5
+    ],
+    "cameraDist": 12.0
+  },
+  {
+    "id": "optics_lens_right",
+    "name": "Right Folded Pancake Optical Assembly",
+    "group": "group_optics",
+    "groupName": "OPTICAL TRAIN",
+    "category": "Pancake Optics",
+    "specs": "Multi-element polarized folded pancake lens architecture, 110\u00b0 diagonal FOV, edge-to-edge optical clarity, anti-reflective coating.",
+    "description": "Folded polarizing geometry bounces incoming display light multiple times, slashing headset thickness by 40% compared to Fresnel lenses.",
+    "verified": true,
+    "assembled": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "exploded": [
+      6.2,
+      0.0,
+      -4.5
+    ],
+    "cameraTarget": [
+      6.2,
+      0.0,
+      -4.5
+    ],
+    "cameraDist": 12.0
+  },
+  {
+    "id": "optics_displays",
+    "name": "Dual 4K+ Infinite Display Panels",
+    "group": "group_optics",
+    "groupName": "DISPLAY SYSTEM",
+    "category": "Infinite Display",
+    "specs": "Dual Fast-Switch LCD panels (2064 \u00d7 2208 pixels per eye, 1218 PPI, 25 PPD), up to 120Hz refresh rate, 100% sRGB color gamut.",
+    "description": "Provides nearly 30% jump in resolution over Quest 2, eliminating the screen-door effect for crisp virtual reality text and fine details.",
     "verified": true,
     "assembled": [
       0.0,
@@ -223,13 +171,65 @@
     ],
     "exploded": [
       0.0,
-      7.5,
-      4.0
+      0.0,
+      -1.8
     ],
     "cameraTarget": [
       0.0,
-      7.5,
-      4.0
+      0.0,
+      -1.8
+    ],
+    "cameraDist": 14.0
+  },
+  {
+    "id": "optics_brackets",
+    "name": "Magnesium IPD Carriage & Guide Rails",
+    "group": "group_optics",
+    "groupName": "MECHANICAL OPTICS",
+    "category": "IPD Mechanism",
+    "specs": "Die-cast magnesium alloy frame, continuous 58mm-71mm manual thumbwheel IPD adjustment mechanism with stainless steel guide rails.",
+    "description": "Houses the optical lenses and displays in rigid alignment while allowing continuous interpupillary distance customization for individual eye spacing.",
+    "verified": true,
+    "assembled": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "exploded": [
+      0.0,
+      0.0,
+      -3.2
+    ],
+    "cameraTarget": [
+      0.0,
+      0.0,
+      -3.2
+    ],
+    "cameraDist": 15.0
+  },
+  {
+    "id": "electronics_motherboard",
+    "name": "10-Layer HDI Main Logic Board",
+    "group": "group_electronics",
+    "groupName": "COMPUTE & ELECTRONICS",
+    "category": "Mainboard Architecture",
+    "specs": "10-layer High Density Interconnect (HDI) rigid PCB, immersion gold pads, surface-mount components, nickel EMI shielding cans.",
+    "description": "The central processing hub uniting the Qualcomm XR2 Gen 2, power regulation circuitry, Wi-Fi 6E connectivity, and video pipelines.",
+    "verified": true,
+    "assembled": [
+      0.0,
+      0.0,
+      0.0
+    ],
+    "exploded": [
+      0.0,
+      6.2,
+      3.2
+    ],
+    "cameraTarget": [
+      0.0,
+      6.2,
+      3.2
     ],
     "cameraDist": 15.0
   },
